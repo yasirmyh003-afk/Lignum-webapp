@@ -268,6 +268,130 @@
 .matts-scroll-wrap .matts-table .label-cell,.quality-scroll-wrap .quality-table .label-cell{min-width:150px !important; text-align:left !important; font-weight:900 !important;}
 @media(max-width:760px){.matts-scroll-wrap::after,.quality-scroll-wrap::after{content:"Scroll sideways to view full table →";display:block;margin-top:10px;font-size:12px;font-weight:800;color:#64748b;}}
 
+
+
+<style id="page-final-matts-quality-fix">
+/* ===== FINAL MATT'S / QUALITY TABLE STRETCH + SCROLL FIX ===== */
+
+.matts-board,
+.quality-board {
+  overflow: hidden !important;
+}
+
+.matts-title,
+.quality-title,
+.section-heading {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* Scroll wrappers */
+.matts-scroll-wrap,
+.quality-scroll-wrap {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 14px !important;
+  margin-bottom: 18px !important;
+}
+
+/* Desktop/laptop: stretch tables full width */
+.matts-scroll-wrap .matts-table,
+.quality-scroll-wrap .quality-table {
+  display: table !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+/* Reset table structure */
+.matts-scroll-wrap .matts-table thead,
+.quality-scroll-wrap .quality-table thead {
+  display: table-header-group !important;
+}
+
+.matts-scroll-wrap .matts-table tbody,
+.quality-scroll-wrap .quality-table tbody {
+  display: table-row-group !important;
+}
+
+.matts-scroll-wrap .matts-table tr,
+.quality-scroll-wrap .quality-table tr {
+  display: table-row !important;
+}
+
+.matts-scroll-wrap .matts-table th,
+.matts-scroll-wrap .matts-table td,
+.quality-scroll-wrap .quality-table th,
+.quality-scroll-wrap .quality-table td {
+  display: table-cell !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+.matts-scroll-wrap .matts-table td,
+.quality-scroll-wrap .quality-table td {
+  font-weight: 300 !important;
+}
+
+.matts-scroll-wrap .matts-table .label-cell,
+.quality-scroll-wrap .quality-table .label-cell {
+  width: 190px !important;
+  min-width: 190px !important;
+  text-align: left !important;
+  font-weight: 900 !important;
+}
+
+/* Mobile: title fixed, only table scrolls */
+@media (max-width: 760px) {
+  .matts-scroll-wrap .matts-table,
+  .quality-scroll-wrap .quality-table {
+    width: max-content !important;
+    min-width: 1120px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+  }
+
+  .matts-scroll-wrap .matts-table th,
+  .matts-scroll-wrap .matts-table td,
+  .quality-scroll-wrap .quality-table th,
+  .quality-scroll-wrap .quality-table td {
+    min-width: 90px !important;
+    padding: 10px 12px !important;
+  }
+
+  .matts-scroll-wrap .matts-table .label-cell,
+  .quality-scroll-wrap .quality-table .label-cell {
+    min-width: 150px !important;
+  }
+
+  .matts-scroll-wrap::after,
+  .quality-scroll-wrap::after {
+    content: "Scroll sideways to view full table →";
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #64748b;
+  }
+}
+</style>	
 </style>
 </head>
 
