@@ -75,19 +75,18 @@
     }
 
     .users-grid {
-      min-width: 1240px;
-      width: 1240px;
-      display: block;
-      background: #ffffff;
-    }
-
-    .users-grid-row {
-      display: grid;
-      grid-template-columns: 200px 300px 130px 130px 220px 260px;
-      align-items: center;
-      min-height: 56px;
-      border-bottom: 1px solid #e5e7eb;
-    }
+  min-width: 1320px;
+  width: 1320px;
+  display: block;
+  background: #ffffff;
+}
+.users-grid-row {
+  display: grid;
+  grid-template-columns: 200px 300px 130px 130px 220px 340px;
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid #e5e7eb;
+}
 
     .users-grid-header {
       background: #eef2f5;
@@ -125,18 +124,20 @@
       box-sizing: border-box;
     }
 
-    .users-grid-cell.actions {
-      overflow: visible;
-    }
+.users-grid-cell.actions {
+  overflow: visible;
+  background: inherit;
+}
 
-    .users-actions-cell {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
+.users-actions-cell {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 320px;
+}
 
     .users-actions-cell button {
       display: inline-flex !important;
@@ -179,7 +180,7 @@
     }
 
     .empty-row {
-      min-width: 1240px;
+      min-width: 1320px;
       padding: 24px;
       text-align: center;
       color: #64748b;
