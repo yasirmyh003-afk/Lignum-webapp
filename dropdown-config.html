@@ -249,6 +249,182 @@
       padding: 20px;
     }
   }
+
+
+
+<style id="final-dropdown-mobile-table-fix">
+/* ===== FINAL DROPDOWN CONFIG MOBILE TABLE FIX ===== */
+
+.page-frame > section.card {
+  overflow: hidden !important;
+}
+
+/* The table must scroll inside this wrapper */
+.page-frame > section.card .table-wrap,
+.table-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 14px !important;
+}
+
+/* Desktop/laptop: keep full width and natural sizing */
+.page-frame > section.card .table,
+.table {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: none !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+/* Headers and values alignment */
+.page-frame > section.card .table th,
+.page-frame > section.card .table td,
+.table th,
+.table td {
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.page-frame > section.card .table th,
+.table th {
+  font-weight: 900 !important;
+}
+
+.page-frame > section.card .table td,
+.table td {
+  font-weight: 300 !important;
+}
+
+/* First column readable */
+.page-frame > section.card .table th:first-child,
+.page-frame > section.card .table td:first-child,
+.table th:first-child,
+.table td:first-child {
+  text-align: left !important;
+  width: 160px !important;
+  min-width: 160px !important;
+}
+
+/* Inputs should not collapse */
+.page-frame > section.card .table input,
+.table input {
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  height: 42px !important;
+  text-align: center !important;
+  font-weight: 300 !important;
+  box-sizing: border-box !important;
+}
+
+/* Last edited by column */
+.page-frame > section.card .table th:last-child,
+.page-frame > section.card .table td:last-child,
+.table th:last-child,
+.table td:last-child {
+  width: 130px !important;
+  min-width: 130px !important;
+}
+
+/* Mobile: table scrolls horizontally, not squeezed */
+@media (max-width: 760px) {
+  .page-frame > section.card {
+    padding: 20px !important;
+  }
+
+  .page-frame > section.card .card-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 15px !important;
+    padding: 13px 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  .page-frame > section.card .table,
+  .table {
+    display: table !important;
+    width: max-content !important;
+    min-width: 1180px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+  }
+
+  .page-frame > section.card .table thead,
+  .table thead {
+    display: table-header-group !important;
+  }
+
+  .page-frame > section.card .table tbody,
+  .table tbody {
+    display: table-row-group !important;
+  }
+
+  .page-frame > section.card .table tr,
+  .table tr {
+    display: table-row !important;
+  }
+
+  .page-frame > section.card .table th,
+  .page-frame > section.card .table td,
+  .table th,
+  .table td {
+    display: table-cell !important;
+    min-width: 86px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 11px 12px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+  }
+
+  .page-frame > section.card .table th:first-child,
+  .page-frame > section.card .table td:first-child,
+  .table th:first-child,
+  .table td:first-child {
+    min-width: 150px !important;
+    width: 150px !important;
+    text-align: left !important;
+  }
+
+  .page-frame > section.card .table th:last-child,
+  .page-frame > section.card .table td:last-child,
+  .table th:last-child,
+  .table td:last-child {
+    min-width: 130px !important;
+    width: 130px !important;
+  }
+
+  .page-frame > section.card .table input,
+  .table input {
+    width: 74px !important;
+    min-width: 74px !important;
+    max-width: 74px !important;
+  }
+
+  .table-wrap::after {
+    content: "Scroll sideways to view full table →";
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #64748b;
+  }
+}
+</style>
 </style>
 </head>
 <body>
