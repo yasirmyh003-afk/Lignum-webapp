@@ -4,249 +4,223 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Users</title>
+
   <link rel="stylesheet" href="global.css" />
-<link rel="icon" type="image/png" sizes="32x32" href="icon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
-<style>
-  /* ===== Users Page UI - HARD FIX ===== */
+  <style>
+    /* ===== USERS PAGE FINAL FIX - NO GLOBAL TABLE CONFLICT ===== */
 
-  .users-page .page-row {
-    align-items: center;
-    margin-bottom: 26px;
-  }
-
-  #add-user-card {
-    border-radius: 22px;
-    border: 1px solid #dbe4ee;
-    box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
-  }
-
-  .users-page .users-list-card {
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-    border-radius: 22px;
-    border: 1px solid #dbe4ee;
-    box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
-    overflow: hidden !important;
-    margin-bottom: 24px;
-    padding: 28px;
-  }
-
-  .users-page .users-list-card .card-pad {
-    padding: 0;
-    margin-bottom: 18px;
-  }
-
-  .users-page .users-list-card .card-title-row {
-    margin-bottom: 0;
-  }
-
-  .users-page .users-list-card .card-title-row .icon {
-    display: none;
-  }
-
-  .users-page .users-list-card .card-title {
-    width: 100%;
-    display: block;
-    background: linear-gradient(135deg, #156082 0%, #0f4a63 100%);
-    color: #ffffff;
-    border-radius: 14px;
-    padding: 14px 18px;
-    box-shadow: 0 10px 22px rgba(21, 96, 130, 0.16);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-size: 18px;
-    font-weight: 900;
-    text-align: left;
-    box-sizing: border-box;
-  }
-
-  /* Scroll container */
-  .users-table-scroll {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    border-radius: 14px;
-  }
-
-  /* Custom table — not using global .table rules */
-  .users-table {
-    width: 100%;
-    min-width: 1180px;
-    border-collapse: separate;
-    border-spacing: 0;
-    table-layout: fixed;
-    background: #ffffff;
-    border: 1px solid #dbe4ee;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
-  }
-
-  .users-table th {
-    background: #eef2f5;
-    color: #475569;
-    padding: 12px 14px;
-    text-align: center;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    border: 0;
-    white-space: nowrap;
-  }
-
-  .users-table td {
-    padding: 13px 14px;
-    border: 0;
-    border-bottom: 1px solid #e5e7eb;
-    color: #0f172a;
-    font-size: 13px;
-    font-weight: 300;
-    background: #ffffff;
-    vertical-align: middle;
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  .users-table tbody tr:nth-child(even) td {
-    background: #f8fafc;
-  }
-
-  .users-table tbody tr:hover td {
-    background: #f1f5f9;
-  }
-
-  .users-table tbody tr:last-child td {
-    border-bottom: 0;
-  }
-
-  .users-table th:nth-child(1),
-  .users-table td:nth-child(1) {
-    width: 190px;
-  }
-
-  .users-table th:nth-child(2),
-  .users-table td:nth-child(2) {
-    width: 280px;
-  }
-
-  .users-table th:nth-child(3),
-  .users-table td:nth-child(3) {
-    width: 120px;
-  }
-
-  .users-table th:nth-child(4),
-  .users-table td:nth-child(4) {
-    width: 130px;
-  }
-
-  .users-table th:nth-child(5),
-  .users-table td:nth-child(5) {
-    width: 210px;
-  }
-
-  .users-table th:nth-child(6),
-  .users-table td:nth-child(6) {
-    width: 360px;
-    min-width: 360px;
-  }
-
-  .users-actions-cell {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-  }
-
-  .users-actions-cell button {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: auto !important;
-    min-width: 72px !important;
-    height: 38px !important;
-    padding: 9px 13px !important;
-    font-size: 12px !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
-    flex: 0 0 auto !important;
-    border-radius: 8px !important;
-  }
-
-  .users-actions-cell button[onclick*="sendPasswordReset"] {
-    min-width: 142px !important;
-  }
-
-  .user-edit-input,
-  .user-edit-select {
-    width: 100%;
-    min-width: 130px;
-    border: 1px solid #dbe4ee;
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 13px;
-    font-weight: 300;
-    color: #0f172a;
-    outline: none;
-  }
-
-  .user-edit-input:focus,
-  .user-edit-select:focus {
-    box-shadow: 0 0 0 2px rgba(21, 96, 130, 0.16);
-  }
-
-  .users-page .empty-row {
-    padding: 24px !important;
-    text-align: center !important;
-    color: #64748b !important;
-    background: #f8fafc !important;
-    font-weight: 800 !important;
-  }
-
-  @media(max-width: 900px) {
     .users-page .page-row {
-      align-items: flex-start;
-      flex-direction: column;
+      align-items: center;
+      margin-bottom: 26px;
     }
 
-    .users-page .page-actions,
-    .users-page .page-actions .btn {
+    #add-user-card {
+      border-radius: 22px;
+      border: 1px solid #dbe4ee;
+      box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    .users-list-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 22px;
+      border: 1px solid #dbe4ee;
+      box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      margin-bottom: 24px;
+      padding: 28px;
+    }
+
+    .users-list-card .card-pad {
+      padding: 0;
+      margin-bottom: 18px;
+    }
+
+    .users-list-card .card-title-row {
+      margin-bottom: 0;
+    }
+
+    .users-list-card .card-title-row .icon {
+      display: none;
+    }
+
+    .users-list-card .card-title {
+      width: 100%;
+      display: block;
+      background: linear-gradient(135deg, #156082 0%, #0f4a63 100%);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 10px 22px rgba(21, 96, 130, 0.16);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 18px;
+      font-weight: 900;
+      text-align: left;
+      box-sizing: border-box;
+    }
+
+    .users-scroll {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 14px;
+      border: 1px solid #dbe4ee;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+      background: #ffffff;
+    }
+
+    .users-grid {
+      min-width: 1240px;
+      width: 1240px;
+      display: block;
+      background: #ffffff;
+    }
+
+    .users-grid-row {
+      display: grid;
+      grid-template-columns: 200px 300px 130px 130px 220px 260px;
+      align-items: center;
+      min-height: 56px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .users-grid-header {
+      background: #eef2f5;
+      min-height: 46px;
+    }
+
+    .users-grid-header > div {
+      color: #475569;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-align: center;
+      padding: 12px 14px;
+      white-space: nowrap;
+    }
+
+    .users-grid-body .users-grid-row:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .users-grid-body .users-grid-row:hover {
+      background: #f1f5f9;
+    }
+
+    .users-grid-cell {
+      padding: 13px 14px;
+      color: #0f172a;
+      font-size: 13px;
+      font-weight: 300;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+    }
+
+    .users-grid-cell.actions {
+      overflow: visible;
+    }
+
+    .users-actions-cell {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
       width: 100%;
     }
 
-    .users-page .users-list-card {
-      padding: 20px !important;
-    }
-
-    .users-page .users-list-card .card-title {
-      font-size: 16px;
-      padding: 13px 16px;
-    }
-
-    .users-table {
-      width: 1180px !important;
-      min-width: 1180px !important;
+    .users-actions-cell button {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: auto !important;
+      height: 38px !important;
+      min-width: 72px !important;
       max-width: none !important;
+      padding: 9px 13px !important;
+      font-size: 12px !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      flex: 0 0 auto !important;
+      border-radius: 8px !important;
     }
 
-    .users-table-scroll::after {
-      content: "Scroll sideways to view full table →";
-      display: block;
-      margin-top: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #64748b;
+    .users-actions-cell button.reset-btn {
+      min-width: 142px !important;
     }
-  }
-</style>
-	
+
+    .user-edit-input,
+    .user-edit-select {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #dbe4ee;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 300;
+      color: #0f172a;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .user-edit-input:focus,
+    .user-edit-select:focus {
+      box-shadow: 0 0 0 2px rgba(21, 96, 130, 0.16);
+    }
+
+    .empty-row {
+      min-width: 1240px;
+      padding: 24px;
+      text-align: center;
+      color: #64748b;
+      background: #f8fafc;
+      font-weight: 800;
+      box-sizing: border-box;
+    }
+
+    @media(max-width: 900px) {
+      .users-page .page-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .users-page .page-actions,
+      .users-page .page-actions .btn {
+        width: 100%;
+      }
+
+      .users-list-card {
+        padding: 20px;
+      }
+
+      .users-list-card .card-title {
+        font-size: 16px;
+        padding: 13px 16px;
+      }
+
+      .users-scroll::after {
+        content: "Scroll sideways to view full table →";
+        display: block;
+        margin: 10px 0 0;
+        padding: 0 0 4px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #64748b;
+      }
+    }
+  </style>
 </head>
+
 <body class="users-page">
 <div class="app-shell">
   <div id="sidebar-mount" class="sidebar-mount"></div>
@@ -258,21 +232,16 @@
           <h1>Users</h1>
           <p>Add users, manage roles, status, and send password reset emails.</p>
         </div>
-        
-		
-		<div class="page-actions">
-			<button id="add-user-toggle-btn" class="btn btn-primary" onclick="toggleAddUserCard()" style="display:none;">Add New User</button>
-			<button class="btn btn-secondary" onclick="loadUsers()">Refresh</button>
-		</div>
 
-	
+        <div class="page-actions">
+          <button id="add-user-toggle-btn" class="btn btn-primary" onclick="toggleAddUserCard()" style="display:none;">Add New User</button>
+          <button class="btn btn-secondary" onclick="loadUsers()">Refresh</button>
+        </div>
       </div>
 
-
-	  <section id="add-user-card" class="card" style="margin-bottom:24px; display:none;">
+      <section id="add-user-card" class="card" style="margin-bottom:24px; display:none;">
         <div class="card-pad">
           <div class="card-title-row">
-
             <div class="card-title">Add User Login</div>
           </div>
 
@@ -323,27 +292,25 @@
       <section class="card users-list-card">
         <div class="card-pad" style="padding-bottom:12px;">
           <div class="card-title-row">
-
             <div class="card-title">Users List</div>
           </div>
 
           <div id="users-status" class="inline-status"></div>
         </div>
 
-        <div class="users-table-scroll>
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="users-body"></tbody>
-          </table>
+        <div class="users-scroll">
+          <div class="users-grid">
+            <div class="users-grid-row users-grid-header">
+              <div>Full Name</div>
+              <div>Email</div>
+              <div>Role</div>
+              <div>Status</div>
+              <div>Created</div>
+              <div>Actions</div>
+            </div>
+
+            <div id="users-body" class="users-grid-body"></div>
+          </div>
         </div>
       </section>
     </div>
@@ -378,6 +345,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 function setUsersStatus(message, type = "info") {
   const status = document.getElementById("users-status");
+  if (!status) return;
+
   status.className = "inline-status show " + type;
   status.textContent = message;
 
@@ -439,83 +408,74 @@ async function loadUsers() {
   tbody.innerHTML = "";
 
   if (!data || data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="empty-row">No users found.</td></tr>`;
+    tbody.innerHTML = `<div class="empty-row">No users found.</div>`;
     return;
   }
 
   data.forEach(user => {
     const isEditing = editingUserId === user.id;
-    const tr = document.createElement("tr");
+    const row = document.createElement("div");
+    row.className = "users-grid-row";
 
     if (isEditing) {
-      tr.innerHTML = `
-        <td>
+      row.innerHTML = `
+        <div class="users-grid-cell">
           <input id="edit-full-name-${user.id}" class="user-edit-input" value="${safeHtml(user.full_name)}" />
-        </td>
+        </div>
 
-        <td>
+        <div class="users-grid-cell">
           <input id="edit-email-${user.id}" class="user-edit-input" type="email" value="${safeHtml(user.email)}" />
-        </td>
+        </div>
 
-        <td>
+        <div class="users-grid-cell">
           <select id="edit-role-${user.id}" class="user-edit-select">
             <option value="Admin" ${user.role === "Admin" ? "selected" : ""}>Admin</option>
             <option value="Manager" ${user.role === "Manager" ? "selected" : ""}>Manager</option>
             <option value="User" ${user.role === "User" ? "selected" : ""}>User</option>
           </select>
-        </td>
+        </div>
 
-        <td>
+        <div class="users-grid-cell">
           <select id="edit-status-${user.id}" class="user-edit-select">
             <option value="Active" ${user.status === "Active" ? "selected" : ""}>Active</option>
             <option value="Inactive" ${user.status === "Inactive" ? "selected" : ""}>Inactive</option>
           </select>
-        </td>
+        </div>
 
-        <td>${user.created_at ? new Date(user.created_at).toLocaleString() : ""}</td>
+        <div class="users-grid-cell">${user.created_at ? new Date(user.created_at).toLocaleString() : ""}</div>
 
-        <td>
+        <div class="users-grid-cell actions">
           <div class="users-actions-cell">
-            <button class="btn btn-primary btn-sm" onclick="saveUserEdit('${user.id}', '${safeJs(user.email)}')">
-              Save
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="cancelUserEdit()">
-              Cancel
-            </button>
+            <button class="btn btn-primary btn-sm" onclick="saveUserEdit('${user.id}', '${safeJs(user.email)}')">Save</button>
+            <button class="btn btn-secondary btn-sm" onclick="cancelUserEdit()">Cancel</button>
           </div>
-        </td>
+        </div>
       `;
     } else {
-      tr.innerHTML = `
-        <td>${safeHtml(user.full_name)}</td>
-        <td>${safeHtml(user.email)}</td>
-        <td>${safeHtml(user.role)}</td>
-        <td>${safeHtml(user.status)}</td>
-        <td>${user.created_at ? new Date(user.created_at).toLocaleString() : ""}</td>
-        <td>
+      row.innerHTML = `
+        <div class="users-grid-cell">${safeHtml(user.full_name)}</div>
+        <div class="users-grid-cell">${safeHtml(user.email)}</div>
+        <div class="users-grid-cell">${safeHtml(user.role)}</div>
+        <div class="users-grid-cell">${safeHtml(user.status)}</div>
+        <div class="users-grid-cell">${user.created_at ? new Date(user.created_at).toLocaleString() : ""}</div>
+        <div class="users-grid-cell actions">
           <div class="users-actions-cell">
-            <button class="btn btn-warning btn-sm" onclick="sendPasswordReset('${safeJs(user.email)}')">
-              Reset Password
-            </button>
+            <button class="btn btn-warning btn-sm reset-btn" onclick="sendPasswordReset('${safeJs(user.email)}')">Reset Password</button>
 
             ${
               isAdmin
                 ? `
-                  <button class="btn btn-secondary btn-sm" onclick="startUserEdit('${user.id}')">
-                    Edit
-                  </button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">
-                    Delete
-                  </button>
+                  <button class="btn btn-secondary btn-sm" onclick="startUserEdit('${user.id}')">Edit</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">Delete</button>
                 `
                 : ``
             }
           </div>
-        </td>
+        </div>
       `;
     }
 
-    tbody.appendChild(tr);
+    tbody.appendChild(row);
   });
 }
 
@@ -569,10 +529,6 @@ async function saveUserEdit(userId, oldEmail) {
     return;
   }
 
-  /*
-    Only send email when email changed.
-    If only name/status/role changed, no email is sent.
-  */
   if (emailChanged) {
     const { error: resetError } = await supabaseClient.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + "/update-password.html"
