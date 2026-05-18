@@ -141,17 +141,59 @@
       white-space: nowrap !important;
     }
 
-    .dashboard-table-card .table td {
-      padding: 11px 14px !important;
-      border: 0 !important;
-      border-bottom: 1px solid #e5e7eb !important;
-      color: #0f172a !important;
-      font-size: 13px !important;
-      font-weight: 700 !important;
-      background: #ffffff;
-      vertical-align: middle;
-      white-space: nowrap;
-    }
+ 
+
+.dashboard-table-card .table td {
+  padding: 11px 14px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 300 !important;
+  background: #ffffff;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-align: center !important;
+}
+
+
+    /* Keep first column header + values left aligned */
+.dashboard-table-card .table th:first-child,
+.dashboard-table-card .table td:first-child {
+  text-align: left !important;
+}
+
+/* Keep last numeric column right aligned */
+.dashboard-table-card .table th:last-child,
+.dashboard-table-card .table td:last-child {
+  text-align: right !important;
+}
+
+/* If this is the Top Grades table, keep Grade column left */
+.dashboard-table-card .grade-table th:nth-child(1),
+.dashboard-table-card .grade-table td:nth-child(1) {
+  text-align: left !important;
+  font-weight: 300 !important;
+}
+
+/* Keep Rows centered */
+.dashboard-table-card .grade-table th:nth-child(2),
+.dashboard-table-card .grade-table td:nth-child(2) {
+  text-align: center !important;
+  font-weight: 300 !important;
+}
+
+/* Keep Total MBF right */
+.dashboard-table-card .grade-table th:nth-child(3),
+.dashboard-table-card .grade-table td:nth-child(3) {
+  text-align: right !important;
+  font-weight: 300 !important;
+}
+
+/* Headers remain bold */
+.dashboard-table-card .table th {
+  font-weight: 900 !important;
+}
 
     .dashboard-table-card .table tbody tr:nth-child(even) td {
       background: #f8fafc !important;
@@ -248,6 +290,12 @@
         color: #64748b;
       }
     }
+
+
+    .mini-table td {
+  font-size: 13px;
+  font-weight: 300;
+}
   </style>
 </head>
 
