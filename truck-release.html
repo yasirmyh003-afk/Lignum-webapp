@@ -376,6 +376,109 @@
 .truck-scroll-wrap .truck-table td{font-weight:300 !important;}
 @media(max-width:760px){.truck-scroll-wrap::after{content:"Scroll sideways to view full table →";display:block;margin-top:10px;font-size:12px;font-weight:800;color:#64748b;}}
 
+
+
+<style id="page-final-truck-fix">
+/* ===== FINAL TRUCK RELEASE TABLE STRETCH FIX ===== */
+
+.tr-table-card {
+  overflow: hidden !important;
+}
+
+.tr-table-title {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* This wrapper should control the scroll */
+.truck-scroll-wrap,
+.tr-table-card .table-wrap {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 14px !important;
+}
+
+/* Desktop: table stretches full width */
+.truck-scroll-wrap .truck-table,
+.tr-table-card .table-wrap .truck-table,
+.tr-table-card > .truck-table {
+  display: table !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+/* Reset proper table structure */
+.truck-table thead {
+  display: table-header-group !important;
+}
+
+.truck-table tbody {
+  display: table-row-group !important;
+}
+
+.truck-table tr {
+  display: table-row !important;
+}
+
+.truck-table th,
+.truck-table td {
+  display: table-cell !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+.truck-table th {
+  font-weight: 900 !important;
+}
+
+.truck-table td {
+  font-weight: 300 !important;
+}
+
+/* Mobile: keep title fixed, only table scrolls */
+@media (max-width: 760px) {
+  .truck-scroll-wrap .truck-table,
+  .tr-table-card .table-wrap .truck-table,
+  .tr-table-card > .truck-table {
+    width: max-content !important;
+    min-width: 950px !important;
+    max-width: none !important;
+    table-layout: auto !important;
+  }
+
+  .truck-table th,
+  .truck-table td {
+    min-width: 95px !important;
+    padding: 10px 12px !important;
+  }
+
+  .truck-scroll-wrap::after,
+  .tr-table-card .table-wrap::after {
+    content: "Scroll sideways to view full table →";
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #64748b;
+  }
+}
+</style>	
 </style>
 </head>
 
