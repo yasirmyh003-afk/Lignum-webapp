@@ -393,6 +393,7 @@ function toggleAddUserCard() {
 async function loadUsers() {
   const currentUser = await getCurrentAppUser();
   const isAdmin = currentUser && currentUser.role === "Admin";
+  const currentUserEmail = String(currentUser?.email || "").trim().toLowerCase();
 
   const { data, error } = await supabaseClient
     .from("app_users")
@@ -415,6 +416,9 @@ async function loadUsers() {
 
   data.forEach(user => {
     const isEditing = editingUserId === user.id;
+    const rowUserEmail = String(user.email || "").trim().toLowerCase();
+    const isOwnRow = currentUserEmail === rowUserEmail;
+
     const row = document.createElement("div");
     row.className = "users-grid-row";
 
@@ -443,12 +447,18 @@ async function loadUsers() {
           </select>
         </div>
 
-        <div class="users-grid-cell">${user.created_at ? new Date(user.created_at).toLocaleString() : ""}</div>
+        <div class="users-grid-cell">
+          ${user.created_at ? new Date(user.created_at).toLocaleString() : ""}
+        </div>
 
         <div class="users-grid-cell actions">
           <div class="users-actions-cell">
-            <button class="btn btn-primary btn-sm" onclick="saveUserEdit('${user.id}', '${safeJs(user.email)}')">Save</button>
-            <button class="btn btn-secondary btn-sm" onclick="cancelUserEdit()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="saveUserEdit('${user.id}', '${safeJs(user.email)}')">
+              Save
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="cancelUserEdit()">
+              Cancel
+            </button>
           </div>
         </div>
       `;
@@ -459,16 +469,35 @@ async function loadUsers() {
         <div class="users-grid-cell">${safeHtml(user.role)}</div>
         <div class="users-grid-cell">${safeHtml(user.status)}</div>
         <div class="users-grid-cell">${user.created_at ? new Date(user.created_at).toLocaleString() : ""}</div>
+
         <div class="users-grid-cell actions">
           <div class="users-actions-cell">
-            <button class="btn btn-warning btn-sm reset-btn" onclick="sendPasswordReset('${safeJs(user.email)}')">Reset Password</button>
+            ${
+              isOwnRow
+                ? `
+                  <button class="btn btn-warning btn-sm reset-btn" onclick="sendPasswordReset('${safeJs(user.email)}')">
+                    Reset Password
+                  </button>
+                `
+                : ``
+            }
 
             ${
               isAdmin
                 ? `
-                  <button class="btn btn-secondary btn-sm" onclick="startUserEdit('${user.id}')">Edit</button>
-                  <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')">Delete</button>
+                  <button class="btn btn-secondary btn-sm" onclick="startUserEdit('${user.id}')">
+                    Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}', '${safeJs(user.email)}')">
+                    Delete
+                  </button>
                 `
+                : ``
+            }
+
+            ${
+              !isOwnRow && !isAdmin
+                ? `<span style="color:#94a3b8;font-weight:700;">—</span>`
                 : ``
             }
           </div>
@@ -649,22 +678,29 @@ async function sendPasswordReset(email) {
   setUsersStatus("Password reset email sent.", "success");
 }
 
-async function deleteUser(id) {
-  const ok = confirm("Delete this user profile? This removes app profile only, not Supabase Auth login.");
+async function deleteUser(id, email) {
+  const ok = confirm(
+    "Delete this user completely? This will remove both the app profile and Supabase Auth login."
+  );
+
   if (!ok) return;
 
-  const { error } = await supabaseClient
-    .from("app_users")
-    .delete()
-    .eq("id", id);
+  setUsersStatus("Deleting user...", "info");
 
-  if (error) {
-    console.error(error);
-    setUsersStatus("Failed to delete user.", "error");
+  const { data, error } = await supabaseClient.functions.invoke("admin-delete-user", {
+    body: {
+      appUserId: id,
+      email: email
+    }
+  });
+
+  if (error || data?.error) {
+    console.error(error || data?.error);
+    setUsersStatus(data?.error || error?.message || "Failed to delete user.", "error");
     return;
   }
 
-  setUsersStatus("User profile deleted.", "success");
+  setUsersStatus("User deleted completely. You can add this email again now.", "success");
   loadUsers();
 }
 </script>
