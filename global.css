@@ -228,6 +228,7 @@ textarea {
 }
 
 .stat-note {
+  font-weight: 300;
   font-size: 13px;
   color: var(--text-secondary);
 }
