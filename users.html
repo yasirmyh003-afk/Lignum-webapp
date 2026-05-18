@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="global.css" />
 <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+
 <style>
-  /* ===== Users Page Table UI ===== */
+  /* ===== Users Page UI - FINAL FIX ===== */
 
   .page-row {
     align-items: center;
@@ -21,30 +22,30 @@
     box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
   }
 
-  .page-frame > section.card:not(#add-user-card) {
+  .users-page .page-frame > section.card:not(#add-user-card) {
     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 22px;
     border: 1px solid #dbe4ee;
     box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
-    overflow: hidden;
+    overflow: hidden !important;
     margin-bottom: 24px;
     padding: 28px;
   }
 
-  .page-frame > section.card:not(#add-user-card) .card-pad {
+  .users-page .page-frame > section.card:not(#add-user-card) .card-pad {
     padding: 0;
     margin-bottom: 18px;
   }
 
-  .page-frame > section.card:not(#add-user-card) .card-title-row {
+  .users-page .page-frame > section.card:not(#add-user-card) .card-title-row {
     margin-bottom: 0;
   }
 
-  .page-frame > section.card:not(#add-user-card) .card-title-row .icon {
+  .users-page .page-frame > section.card:not(#add-user-card) .card-title-row .icon {
     display: none;
   }
 
-  .page-frame > section.card:not(#add-user-card) .card-title {
+  .users-page .page-frame > section.card:not(#add-user-card) .card-title {
     width: 100%;
     display: block;
     background: linear-gradient(135deg, #156082 0%, #0f4a63 100%);
@@ -60,19 +61,24 @@
     box-sizing: border-box;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table-wrap {
-    width: 100%;
+  /* IMPORTANT: table scrolls inside this wrapper */
+  .users-page .table-wrap {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
     padding: 0 !important;
-    margin: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    box-sizing: border-box;
-    border-radius: 14px;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+    border-radius: 14px !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table {
-    width: 100% !important;
-    min-width: 900px !important;
+  .users-page .table {
+    width: max-content !important;
+    min-width: 1280px !important;
+    max-width: none !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
     background: #ffffff;
@@ -84,15 +90,15 @@
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
   }
 
-  .page-frame > section.card:not(#add-user-card) .table thead tr {
+  .users-page .table thead tr {
     background: #eef2f5 !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table th {
+  .users-page .table th {
     background: #eef2f5 !important;
     color: #475569 !important;
     padding: 12px 14px !important;
-    text-align: left !important;
+    text-align: center !important;
     font-size: 10px !important;
     font-weight: 900 !important;
     text-transform: uppercase !important;
@@ -101,37 +107,116 @@
     white-space: nowrap !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table td {
-    padding: 11px 14px !important;
+  .users-page .table td {
+    padding: 13px 14px !important;
     border: 0 !important;
     border-bottom: 1px solid #e5e7eb !important;
     color: #0f172a !important;
     font-size: 13px !important;
     font-weight: 300 !important;
     background: #ffffff;
-    vertical-align: middle;
-    white-space: nowrap;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    text-align: center !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table tbody tr:nth-child(even) td {
+  .users-page .table tbody tr:nth-child(even) td {
     background: #f8fafc !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table tbody tr:hover td {
+  .users-page .table tbody tr:hover td {
     background: #f1f5f9 !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .table tbody tr:last-child td {
+  .users-page .table tbody tr:last-child td {
     border-bottom: 0 !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .btn-sm {
-    padding: 7px 10px;
-    font-size: 12px;
-    border-radius: 8px;
+  /* Column widths */
+  .users-page .table th:nth-child(1),
+  .users-page .table td:nth-child(1) {
+    min-width: 210px !important;
+    width: 210px !important;
   }
 
-  .page-frame > section.card:not(#add-user-card) .empty-row {
+  .users-page .table th:nth-child(2),
+  .users-page .table td:nth-child(2) {
+    min-width: 280px !important;
+    width: 280px !important;
+  }
+
+  .users-page .table th:nth-child(3),
+  .users-page .table td:nth-child(3) {
+    min-width: 130px !important;
+    width: 130px !important;
+  }
+
+  .users-page .table th:nth-child(4),
+  .users-page .table td:nth-child(4) {
+    min-width: 130px !important;
+    width: 130px !important;
+  }
+
+  .users-page .table th:nth-child(5),
+  .users-page .table td:nth-child(5) {
+    min-width: 220px !important;
+    width: 220px !important;
+  }
+
+  /* Big enough for Reset Password + Edit + Delete */
+  .users-page .table th:nth-child(6),
+  .users-page .table td:nth-child(6) {
+    min-width: 310px !important;
+    width: 310px !important;
+    max-width: none !important;
+  }
+
+  .users-actions-cell {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: max-content !important;
+    min-width: 100% !important;
+  }
+
+  .users-actions-cell .btn,
+  .users-actions-cell button,
+  button[onclick*="sendPasswordReset"] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    flex: 0 0 auto !important;
+  }
+
+  .user-edit-input,
+  .user-edit-select {
+    width: 100%;
+    min-width: 130px;
+    border: 1px solid #dbe4ee;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 300;
+    color: #0f172a;
+    outline: none;
+  }
+
+  .user-edit-input:focus,
+  .user-edit-select:focus {
+    box-shadow: 0 0 0 2px rgba(21, 96, 130, 0.16);
+  }
+
+  .users-page .empty-row {
     padding: 24px !important;
     text-align: center !important;
     color: #64748b !important;
@@ -150,55 +235,30 @@
       width: 100%;
     }
 
-    .page-frame > section.card:not(#add-user-card) {
-      padding: 20px;
+    .users-page .page-frame > section.card:not(#add-user-card) {
+      padding: 20px !important;
     }
 
-    .page-frame > section.card:not(#add-user-card) .card-title {
+    .users-page .page-frame > section.card:not(#add-user-card) .card-title {
       font-size: 16px;
       padding: 13px 16px;
     }
-  }
-  
 
-  .user-edit-input,
-  .user-edit-select {
-    width: 100%;
-    min-width: 130px;
-    border: 1px solid #dbe4ee;
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #0f172a;
-    outline: none;
-  }
+    .users-page .table {
+      min-width: 1280px !important;
+    }
 
-  .user-edit-input:focus,
-  .user-edit-select:focus {
-    box-shadow: 0 0 0 2px rgba(21, 96, 130, 0.16);
+    .users-page .table-wrap::after {
+      content: "Scroll sideways to view full table →";
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+    }
   }
-
-  .users-actions-cell {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
 </style>
-
-<style id="page-final-users-fix">
-
-/* Page-final users button/table fix */
-.page-frame > section.card:not(#add-user-card) .table th,
-.page-frame > section.card:not(#add-user-card) .table td{text-align:center !important;}
-.page-frame > section.card:not(#add-user-card) .table td{font-weight:300 !important;}
-.users-actions-cell{display:flex !important; flex-wrap:nowrap !important; gap:8px !important; align-items:center !important; justify-content:center !important; min-width:max-content !important;}
-.users-actions-cell .btn,.users-actions-cell button,button[onclick*="sendPasswordReset"]{width:auto !important; min-width:max-content !important; max-width:none !important; white-space:nowrap !important; padding:10px 14px !important; font-size:13px !important; line-height:1.2 !important;}
-table.table th:last-child,table.table td:last-child{min-width:170px !important; width:auto !important; max-width:none !important;}
-
-</style>
+	
 </head>
 <body class="users-page">
 <div class="app-shell">
@@ -284,7 +344,7 @@ table.table th:last-child,table.table td:last-child{min-width:170px !important; 
         </div>
 
         <div class="table-wrap">
-          <table class="table" style="min-width:1100px;">
+          <table class="table">
             <thead>
               <tr>
                 <th>Full Name</th>
