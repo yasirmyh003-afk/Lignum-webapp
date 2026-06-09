@@ -62,13 +62,13 @@
     text-transform: uppercase;
     font-size: 18px;
     font-weight: 900;
-    text-align: center;
+    text-align: left;
   }
 
   .ao-table {
-    width: 100%;
-    min-width: 1100px;
-    max-width: 1250px;
+    width: max-content;
+    min-width: 2800px;
+    max-width: none;
     margin: 0 auto 0;
     border-collapse: separate;
     border-spacing: 0;
@@ -76,7 +76,7 @@
     font-size: 13px;
     overflow: hidden;
     border-radius: 14px;
-    table-layout: fixed;
+    table-layout: auto;
     border: 1px solid #dbe4ee;
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
   }
@@ -103,11 +103,22 @@
     font-weight: 300 !important;
     background: transparent;
     text-align: center;
+    white-space: nowrap;
   }
 
   .ao-table td:first-child,
   .ao-table th:first-child {
     text-align: left !important;
+  }
+
+  .ao-table tr.ao-light-row td {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .ao-table tr.ao-dark-row td {
+    background: #000000 !important;
+    color: #ffffff !important;
   }
 
   .ao-empty {
@@ -126,6 +137,246 @@
     font-weight: 900;
     display: inline-block;
   }
+
+
+  /* ===== Order Editor Modal ===== */
+  .ao-editor-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.48);
+    z-index: 2500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .ao-editor-overlay.open {
+    display: flex;
+  }
+
+  .ao-editor-modal {
+    width: min(1180px, 96vw);
+    max-height: 92vh;
+    overflow-y: auto;
+    background: #f5f7fa;
+    border-radius: 22px;
+    border: 1px solid #dbe4ee;
+    box-shadow: 0 26px 70px rgba(15, 23, 42, 0.24);
+    padding: 24px;
+  }
+
+  .ao-editor-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .ao-editor-top h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #0f172a;
+    font-weight: 900;
+  }
+
+  .ao-editor-close {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid #dbe4ee;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .ao-editor-hero {
+    background: linear-gradient(135deg, #156082 0%, #0f4a63 100%);
+    color: #ffffff;
+    padding: 22px 24px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 28px rgba(21, 96, 130, 0.18);
+  }
+
+  .ao-editor-hero h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ao-editor-hero p {
+    margin: 8px 0 0;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.92;
+  }
+
+  .ao-editor-card {
+    background: #ffffff;
+    border: 1px solid #dbe4ee;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  }
+
+  .ao-editor-status {
+    display: none;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
+  }
+
+  .ao-editor-status.show { display: block; }
+  .ao-editor-status.info { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .ao-editor-status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .ao-editor-status.success { background: #ecfdf5; color: #059669; border: 1px solid #bbf7d0; }
+
+  .ao-editor-form-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) 150px;
+    gap: 14px;
+    align-items: end;
+  }
+
+  .ao-editor-form-grid label,
+  .ao-editor-table label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.1em;
+  }
+
+  .ao-editor-form-grid input,
+  .ao-editor-table input {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #dbe4ee;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #f1f5f9;
+    outline: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .ao-editor-form-grid input:focus,
+  .ao-editor-table input:focus {
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(21, 96, 130, 0.16);
+  }
+
+  .ao-editor-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid #dbe4ee;
+    background: #ffffff;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+  }
+
+  .ao-editor-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    font-size: 13px;
+  }
+
+  .ao-editor-table th {
+    background: #eef2f5;
+    color: #475569;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border-bottom: 1px solid #dbe4ee;
+    white-space: nowrap;
+  }
+
+  .ao-editor-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #0f172a;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .ao-editor-table tr:nth-child(even) td { background: #f8fafc; }
+
+  .ao-editor-table th:nth-child(1), .ao-editor-table td:nth-child(1) { min-width: 95px; }
+  .ao-editor-table th:nth-child(2), .ao-editor-table td:nth-child(2) { min-width: 165px; }
+  .ao-editor-table th:nth-child(3), .ao-editor-table td:nth-child(3) { min-width: 80px; }
+  .ao-editor-table th:nth-child(4), .ao-editor-table td:nth-child(4) { min-width: 220px; }
+  .ao-editor-table th:nth-child(5), .ao-editor-table td:nth-child(5) { min-width: 120px; }
+  .ao-editor-table th:nth-child(6), .ao-editor-table td:nth-child(6) { min-width: 120px; }
+  .ao-editor-table th:nth-child(7), .ao-editor-table td:nth-child(7) { min-width: 130px; }
+  .ao-editor-table th:nth-child(8), .ao-editor-table td:nth-child(8) { min-width: 170px; }
+  .ao-editor-table th:nth-child(9), .ao-editor-table td:nth-child(9) { min-width: 170px; }
+
+  .ao-editor-table td input {
+    width: 100%;
+    min-width: 100%;
+    min-height: 38px;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .ao-editor-table td input[type="date"] { min-width: 150px; }
+
+  .ao-editor-tally-pill {
+    display: inline-block;
+    background: #eaf4d3;
+    color: #156082;
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .ao-editor-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .ao-editor-empty {
+    text-align: center;
+    padding: 28px;
+    color: #64748b;
+    font-weight: 800;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+  }
+
+  @media(max-width: 760px) {
+    .ao-editor-overlay { padding: 12px; }
+    .ao-editor-modal { padding: 16px; }
+    .ao-editor-form-grid { grid-template-columns: 1fr; }
+    .ao-editor-actions { flex-direction: column; }
+    .ao-editor-actions .btn, .ao-editor-form-grid .btn { width: 100%; }
+  }
+
 
   @media(max-width: 900px) {
     .ao-header-row {
@@ -147,7 +398,7 @@
     }
 
     .ao-table {
-      min-width: 1000px;
+      min-width: 2800px;
     }
   }
 </style>
@@ -166,6 +417,7 @@
   </div>
 
   <div class="page-actions">
+    <button class="btn btn-primary" onclick="openOrderEditor()">Edit Orders</button>
     <button class="btn btn-secondary" onclick="loadActiveOrders()">Refresh</button>
   </div>
 </div>
@@ -198,10 +450,25 @@
           <th>Size</th>
           <th>Tally</th>
           <th>Cost</th>
+          <th>Running Cost</th>
+          <th>Transload</th>
+          <th>Storage</th>
+          <th>Interest</th>
+          <th>Freight</th>
           <th>Sales Price</th>
+          <th>Margin</th>
+          <th>Revenue</th>
           <th>MBF</th>
           <th>Sold</th>
           <th>Ship Week</th>
+          <th>Cost</th>
+          <th>Running Cost</th>
+          <th>Transload Cost</th>
+          <th>Storage Cost</th>
+          <th>Interest Cost</th>
+          <th>Freight</th>
+          <th>Margin</th>
+          <th>Sales Price</th>
         </tr>
       </thead>
       <tbody id="active-orders-body"></tbody>
@@ -212,12 +479,60 @@
   </main>
 </div>
 
+
+<div id="ao-editor-overlay" class="ao-editor-overlay" onclick="handleOrderEditorOverlayClick(event)">
+  <div class="ao-editor-modal" role="dialog" aria-modal="true" aria-labelledby="ao-editor-title">
+    <div class="ao-editor-top">
+      <h2>Order Editor</h2>
+      <button class="ao-editor-close" type="button" onclick="closeOrderEditor()">×</button>
+    </div>
+
+    <div class="ao-editor-hero">
+      <h3 id="ao-editor-title">Order Editor</h3>
+      <p>Search by customer PO and size, then update grouped order fields in Inventory. Active Orders refreshes automatically after save.</p>
+    </div>
+
+    <div id="ao-editor-status" class="ao-editor-status"></div>
+
+    <div class="ao-editor-card">
+      <div class="ao-editor-form-grid">
+        <div>
+          <label>CUST PO#</label>
+          <input id="ao-editor-po" placeholder="Example: 63206" />
+        </div>
+
+        <div>
+          <label>Size</label>
+          <input id="ao-editor-size" placeholder="Example: 2x6" />
+        </div>
+
+        <button id="ao-editor-fetch-btn" class="btn btn-primary" type="button" onclick="fetchOrderEditorData()">Fetch Data</button>
+      </div>
+    </div>
+
+    <div id="ao-editor-results"></div>
+  </div>
+</div>
+
 <script src="layout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 
 <script>
 let inventoryRows = [];
+
+const ACTIVE_ORDER_COLUMN_COUNT = 25;
+
+/*
+  Active Orders logic follows the same grouping/calculation style as the
+  SELLER ACTIVE ORDERS Google Sheet script:
+  - Filter by CUSTOMER
+  - Group by LOCATION + SO# + CUST PO# + SIZE
+  - Split grouped rows into Stud, Regular Dimension, and Long Dimension rows
+  - Calculate gross dollar columns and per-MBF columns
+  - Freight is intentionally left blank for now. Do not calculate freight here
+    until the final web app freight logic is provided.
+*/
 
 document.addEventListener("DOMContentLoaded", async function () {
   await requireLogin();
@@ -229,26 +544,79 @@ function isBlank(value) {
   return value === null || value === undefined || String(value).trim() === "";
 }
 
-function num(value) {
-  return Number(String(value || "0").replace(/,/g, "")) || 0;
+function safeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-function avg(arr) {
-  const clean = arr.map(num).filter(v => !Number.isNaN(v));
-  if (!clean.length) return "";
-  return clean.reduce((a,b) => a + b, 0) / clean.length;
+function normalizeText(value) {
+  return String(value || "").trim();
+}
+
+function normalizeLength(value) {
+  const str = String(value || "").trim().replace("'", "").replace("Mkt", "");
+  return Number(str) || 0;
+}
+
+function num(value) {
+  if (isBlank(value)) return 0;
+  return Number(String(value).replace(/,/g, "")) || 0;
+}
+
+function hasValue(value) {
+  return !isBlank(value) && !Number.isNaN(Number(String(value).replace(/,/g, "")));
+}
+
+function firstAvailableValue(row, fields) {
+  for (const field of fields) {
+    if (row && row[field] !== undefined && row[field] !== null && String(row[field]).trim() !== "") {
+      return row[field];
+    }
+  }
+
+  return "";
 }
 
 function formatNumber(value, digits = 2) {
-  if (value === "" || value === null || value === undefined) return "";
-  return Number(value).toLocaleString(undefined, { maximumFractionDigits: digits });
+  if (value === "" || value === null || value === undefined || Number.isNaN(Number(value))) return "";
+
+  return Number(value).toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits
+  });
 }
 
-function formatDate(value) {
+function formatMoney(value, digits = 2) {
+  return formatNumber(value, digits);
+}
+
+function formatDateMMMDD(value) {
   if (!value) return "";
+
   const d = new Date(value);
+
   if (isNaN(d.getTime())) return value;
-  return d.toLocaleDateString("en-US", { month:"short", day:"numeric" });
+
+  return d
+    .toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit"
+    })
+    .replace(" ", "-")
+    .toUpperCase();
+}
+
+function divideSafe(numerator, denominator) {
+  if (numerator === "" || numerator === null || numerator === undefined) return "";
+
+  const den = Number(denominator || 0);
+  if (!den) return "";
+
+  return Number(numerator) / den;
 }
 
 async function loadActiveOrders() {
@@ -297,25 +665,155 @@ function loadCustomerDropdown() {
   }
 }
 
-function buildTally(lengths) {
+function countLengths(rows) {
   const counts = {};
 
-  lengths.forEach(length => {
-    const len = Number(length);
-    if (!len) return;
-    counts[len] = (counts[len] || 0) + 1;
+  rows.forEach(row => {
+    const length = normalizeLength(row.length);
+    if (!length) return;
+    counts[length] = (counts[length] || 0) + 1;
   });
 
-  const studLens = [92,104,116];
-  const dimLens = [8,10,12,14,16,18,20];
+  return counts;
+}
 
-  const studParts = studLens
-    .filter(l => counts[l])
-    .map(l => `${counts[l]}/${l}s`);
+function formatStudTally(rows) {
+  const studLens = [92, 104, 116];
+  const counts = countLengths(rows);
 
-  if (studParts.length) return studParts.join("-");
+  return studLens
+    .filter(length => counts[length])
+    .map(length => `${counts[length]}/${length}s`)
+    .join("-");
+}
 
-  return dimLens.map(l => counts[l] || 0).join("-");
+function formatDimTally(rows) {
+  const shortLens = [8, 10, 12, 14, 16];
+  const fullLens = [8, 10, 12, 14, 16, 18, 20];
+  const counts = countLengths(rows);
+
+  const existingRegularLens = fullLens.filter(length => counts[length]);
+  const has18Or20 = [18, 20].some(length => counts[length]);
+
+  if (existingRegularLens.length <= 2) {
+    return existingRegularLens
+      .map(length => `${counts[length]}/${length}'`)
+      .join(" ");
+  }
+
+  if (!has18Or20) {
+    return shortLens
+      .map(length => counts[length] || 0)
+      .join("-");
+  }
+
+  return fullLens
+    .map(length => counts[length] || 0)
+    .join("-");
+}
+
+function formatLongTally(rows) {
+  const counts = countLengths(rows);
+
+  return Object.keys(counts)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(length => `${counts[length]}/${length}'`)
+    .join(" ");
+}
+
+function sumField(rows, field) {
+  const hasAnyValue = rows.some(row => hasValue(row[field]));
+  if (!hasAnyValue) return "";
+
+  return rows.reduce((total, row) => total + num(row[field]), 0);
+}
+
+function weightedGross(rows, rateField) {
+  const hasAnyRate = rows.some(row => hasValue(row[rateField]));
+  if (!hasAnyRate) return "";
+
+  return rows.reduce((total, row) => {
+    const rate = num(row[rateField]);
+    const mbf = num(row.mbf);
+    return total + (rate * mbf);
+  }, 0);
+}
+
+function firstValue(rows, field) {
+  const found = rows.find(row => !isBlank(row[field]));
+  return found ? found[field] : "";
+}
+
+function buildOutputRow(group, rows, tally) {
+  const totalMbf = sumField(rows, "mbf");
+
+  const grossCost = weightedGross(rows, "cost");
+  const grossRunningCost = weightedGross(rows, "runningCost");
+
+  // These fields are treated as already-gross totals, matching your Sheet logic.
+  const grossTransload = sumField(rows, "transload");
+  const grossStorage = sumField(rows, "storage");
+  const grossInterest = sumField(rows, "interest");
+
+  // Freight comes directly from Inventory freight column.
+  const grossFreight = sumField(rows, "freight");
+
+  const grossSalesPrice = weightedGross(rows, "salesPrice");
+
+  const costPerMbf = divideSafe(grossCost, totalMbf);
+  const runningCostPerMbf = divideSafe(grossRunningCost, totalMbf);
+  const transloadCostPerMbf = divideSafe(grossTransload, totalMbf);
+  const storageCostPerMbf = divideSafe(grossStorage, totalMbf);
+  const interestCostPerMbf = divideSafe(grossInterest, totalMbf);
+  const freightPerMbf = divideSafe(grossFreight, totalMbf);
+  const salesPricePerMbf = divideSafe(grossSalesPrice, totalMbf);
+
+  const marginPerMbf =
+    salesPricePerMbf === "" || costPerMbf === ""
+      ? ""
+      : salesPricePerMbf - costPerMbf;
+
+  const grossMargin =
+    marginPerMbf === "" || totalMbf === ""
+      ? ""
+      : marginPerMbf * Number(totalMbf || 0);
+
+  const grossRevenue =
+    salesPricePerMbf === "" || totalMbf === ""
+      ? ""
+      : salesPricePerMbf * Number(totalMbf || 0);
+
+  return {
+    location: group.loc,
+    so: group.so,
+    po: group.po,
+    size: group.size,
+    tally,
+
+    grossCost,
+    grossRunningCost,
+    grossTransload,
+    grossStorage,
+    grossInterest,
+    grossFreight,
+    grossSalesPrice,
+    grossMargin,
+    grossRevenue,
+
+    mbf: totalMbf,
+    sold: formatDateMMMDD(firstValue(rows, "sold")),
+    shipWeek: formatDateMMMDD(firstValue(rows, "ship")),
+
+    costPerMbf,
+    runningCostPerMbf,
+    transloadCostPerMbf,
+    storageCostPerMbf,
+    interestCostPerMbf,
+    freightPerMbf,
+    marginPerMbf,
+    salesPricePerMbf
+  };
 }
 
 function getGroupedRows(customer) {
@@ -323,59 +821,430 @@ function getGroupedRows(customer) {
     String(row.customer || "") === String(customer || "")
   );
 
-  const group = {};
+  const groups = {};
 
   filtered.forEach(row => {
     const loc = row.location || "";
     const so = row.so_number || "";
     const po = row.cust_po_number || "";
     const size = row.size || "";
-
     const key = `${loc}|${so}|${po}|${size}`;
 
-    if (!group[key]) {
-      group[key] = {
+    if (!groups[key]) {
+      groups[key] = {
         loc,
         so,
         po,
         size,
-        lengths: [],
-        cost: [],
-        price: [],
-        mbf: [],
-        sold: [],
-        ship: []
+        rows: []
       };
     }
 
-    group[key].lengths.push(row.length_value);
-    group[key].cost.push(row.cost);
-    group[key].price.push(row.sales_price);
-    group[key].mbf.push(row.mbf);
-    group[key].sold.push(row.sold);
-    group[key].ship.push(row.ship_week);
+    groups[key].rows.push({
+      length: normalizeLength(row.length_value),
+
+      cost: firstAvailableValue(row, ["cost"]),
+      runningCost: firstAvailableValue(row, [
+        "running_cost",
+        "runningCost",
+        "runningcost",
+        "running_cost_per_mbf",
+        "running_cost_value"
+      ]),
+      transload: firstAvailableValue(row, ["transload", "transload_cost"]),
+      storage: firstAvailableValue(row, ["storage"]),
+      interest: firstAvailableValue(row, ["interest"]),
+      freight: firstAvailableValue(row, ["freight", "Freight", "FREIGHT"]),
+      salesPrice: firstAvailableValue(row, ["sales_price", "salesPrice"]),
+      mbf: firstAvailableValue(row, ["mbf"]),
+
+      sold: firstAvailableValue(row, ["sold"]),
+      ship: firstAvailableValue(row, ["ship_week", "shipWeek"])
+    });
   });
 
-  const output = Object.values(group).map(g => ({
-    location: g.loc,
-    so: g.so,
-    po: g.po,
-    size: g.size,
-    tally: buildTally(g.lengths),
-    cost: avg(g.cost),
-    sales_price: avg(g.price),
-    mbf: avg(g.mbf),
-    sold: g.sold.find(v => !isBlank(v)) || "",
-    ship_week: g.ship.find(v => !isBlank(v)) || ""
-  }));
+  const output = [];
 
-  output.sort((a,b) => {
-    if (a.location !== b.location) return String(a.location).localeCompare(String(b.location));
-    if (Number(a.so) !== Number(b.so)) return Number(a.so || 0) - Number(b.so || 0);
-    return String(a.size).localeCompare(String(b.size));
+  Object.values(groups).forEach(group => {
+    const studRows = group.rows.filter(row =>
+      [92, 104, 116].includes(normalizeLength(row.length))
+    );
+
+    const regularRows = group.rows.filter(row => {
+      const length = normalizeLength(row.length);
+      return length >= 8 && length <= 20 && ![92, 104, 116].includes(length);
+    });
+
+    const longRows = group.rows.filter(row => {
+      const length = normalizeLength(row.length);
+      return length >= 22 && ![92, 104, 116].includes(length);
+    });
+
+    if (studRows.length) {
+      output.push(buildOutputRow(group, studRows, formatStudTally(studRows)));
+    }
+
+    if (regularRows.length) {
+      output.push(buildOutputRow(group, regularRows, formatDimTally(regularRows)));
+    }
+
+    if (longRows.length) {
+      output.push(buildOutputRow(group, longRows, formatLongTally(longRows)));
+    }
+  });
+
+  output.sort((a, b) => {
+    const locA = String(a.location || "");
+    const locB = String(b.location || "");
+
+    if (locA !== locB) {
+      return locA.localeCompare(locB);
+    }
+
+    const soA = Number(a.so) || 0;
+    const soB = Number(b.so) || 0;
+
+    if (soA !== soB) {
+      return soA - soB;
+    }
+
+    const poA = String(a.po || "");
+    const poB = String(b.po || "");
+
+    if (poA !== poB) {
+      return poA.localeCompare(poB);
+    }
+
+    const sizeA = String(a.size || "");
+    const sizeB = String(b.size || "");
+
+    return sizeA.localeCompare(sizeB);
   });
 
   return output;
+}
+
+
+// ===== ORDER EDITOR MODAL =====
+let orderEditorRows = [];
+
+function setOrderEditorStatus(message, type = "info") {
+  const status = document.getElementById("ao-editor-status");
+  if (!status) return;
+
+  status.className = "ao-editor-status show " + type;
+  status.textContent = message;
+}
+
+function clearOrderEditorStatus() {
+  const status = document.getElementById("ao-editor-status");
+  if (!status) return;
+
+  status.className = "ao-editor-status";
+  status.textContent = "";
+}
+
+function formatDateForInput(value) {
+  if (!value) return "";
+
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return "";
+
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function parseEditorNumber(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const n = Number(String(value).replace(/,/g, ""));
+  return Number.isNaN(n) ? null : n;
+}
+
+function openOrderEditor(prefillPO = "", prefillSize = "") {
+  const overlay = document.getElementById("ao-editor-overlay");
+  if (!overlay) return;
+
+  const poInput = document.getElementById("ao-editor-po");
+  const sizeInput = document.getElementById("ao-editor-size");
+
+  if (poInput) poInput.value = prefillPO || "";
+  if (sizeInput) sizeInput.value = prefillSize || "";
+
+  clearOrderEditorStatus();
+  renderOrderEditorRows([]);
+  overlay.classList.add("open");
+
+  setTimeout(() => {
+    if (poInput && !poInput.value) poInput.focus();
+    else if (sizeInput && !sizeInput.value) sizeInput.focus();
+  }, 50);
+}
+
+function closeOrderEditor() {
+  const overlay = document.getElementById("ao-editor-overlay");
+  if (overlay) overlay.classList.remove("open");
+}
+
+function handleOrderEditorOverlayClick(event) {
+  if (event.target && event.target.id === "ao-editor-overlay") {
+    closeOrderEditor();
+  }
+}
+
+function getRowsForOrderEditor(po, size) {
+  const searchPO = normalizeText(po);
+  const searchSize = normalizeText(size).toLowerCase();
+
+  return inventoryRows.filter(row => {
+    const rowPO = normalizeText(row.cust_po_number);
+    const rowSize = normalizeText(row.size).toLowerCase();
+    return rowPO === searchPO && rowSize === searchSize;
+  });
+}
+
+function buildOrderEditorGroup(rows, tally, groupType) {
+  if (!rows.length) return null;
+
+  return {
+    groupType,
+    tally,
+    count: rows.length,
+    ids: rows.map(row => row.id).filter(Boolean),
+    location: firstAvailableValue(rows[0], ["location"]),
+    so: firstAvailableValue(rows[0], ["so_number"]),
+    cost: firstAvailableValue(rows[0], ["cost"]),
+    freight: firstAvailableValue(rows[0], ["freight", "Freight", "FREIGHT"]),
+    sold: formatDateForInput(firstAvailableValue(rows[0], ["sold"])),
+    shipWeek: formatDateForInput(firstAvailableValue(rows[0], ["ship_week", "shipWeek"]))
+  };
+}
+
+function fetchOrderEditorData() {
+  clearOrderEditorStatus();
+
+  const poInput = document.getElementById("ao-editor-po");
+  const sizeInput = document.getElementById("ao-editor-size");
+  const fetchBtn = document.getElementById("ao-editor-fetch-btn");
+
+  const po = normalizeText(poInput?.value);
+  const size = normalizeText(sizeInput?.value);
+
+  if (!po || !size) {
+    setOrderEditorStatus("Please enter both CUST PO# and Size.", "error");
+    return;
+  }
+
+  if (fetchBtn) {
+    fetchBtn.disabled = true;
+    fetchBtn.textContent = "Loading...";
+  }
+
+  try {
+    const matched = getRowsForOrderEditor(po, size);
+
+    const studRows = matched.filter(row =>
+      [92, 104, 116].includes(normalizeLength(row.length_value))
+    );
+
+    const regularRows = matched.filter(row => {
+      const length = normalizeLength(row.length_value);
+      return length >= 8 && length <= 20 && ![92, 104, 116].includes(length);
+    });
+
+    const longRows = matched.filter(row => {
+      const length = normalizeLength(row.length_value);
+      return length >= 22 && ![92, 104, 116].includes(length);
+    });
+
+    const groups = [
+      buildOrderEditorGroup(studRows, formatStudTally(studRows.map(row => ({ length: row.length_value }))), "Stud"),
+      buildOrderEditorGroup(regularRows, formatDimTally(regularRows.map(row => ({ length: row.length_value }))), "Dimension"),
+      buildOrderEditorGroup(longRows, formatLongTally(longRows.map(row => ({ length: row.length_value }))), "Long")
+    ].filter(Boolean);
+
+    renderOrderEditorRows(groups);
+
+    if (!groups.length) {
+      setOrderEditorStatus("No matching inventory rows found for this PO and Size.", "info");
+    } else {
+      setOrderEditorStatus(`Loaded ${groups.length} grouped row(s).`, "success");
+    }
+  } catch (error) {
+    console.error("Order editor fetch error:", error);
+    setOrderEditorStatus(error.message || "Could not fetch order rows.", "error");
+  } finally {
+    if (fetchBtn) {
+      fetchBtn.disabled = false;
+      fetchBtn.textContent = "Fetch Data";
+    }
+  }
+}
+
+function renderOrderEditorRows(rows) {
+  orderEditorRows = rows || [];
+
+  const results = document.getElementById("ao-editor-results");
+  if (!results) return;
+
+  if (!orderEditorRows.length) {
+    results.innerHTML = `<div class="ao-editor-empty">No rows loaded yet.</div>`;
+    return;
+  }
+
+  let html = `
+    <div class="ao-editor-card">
+      <div class="ao-editor-table-wrap">
+        <table class="ao-editor-table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Tally</th>
+              <th>Units</th>
+              <th>Location</th>
+              <th>SO#</th>
+              <th>Cost</th>
+              <th>Freight</th>
+              <th>Sold</th>
+              <th>Ship Week</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+  orderEditorRows.forEach((row, index) => {
+    html += `
+      <tr>
+        <td>${safeHtml(row.groupType)}</td>
+        <td><span class="ao-editor-tally-pill">${safeHtml(row.tally)}</span></td>
+        <td>${safeHtml(row.count)}</td>
+        <td><input value="${safeHtml(row.location)}" onchange="orderEditorRows[${index}].location=this.value" /></td>
+        <td><input value="${safeHtml(row.so)}" onchange="orderEditorRows[${index}].so=this.value" /></td>
+        <td><input type="number" step="0.01" value="${safeHtml(row.cost)}" onchange="orderEditorRows[${index}].cost=this.value" /></td>
+        <td><input type="number" step="0.01" value="${safeHtml(row.freight)}" onchange="orderEditorRows[${index}].freight=this.value" /></td>
+        <td><input type="date" value="${safeHtml(row.sold)}" onchange="orderEditorRows[${index}].sold=this.value" /></td>
+        <td><input type="date" value="${safeHtml(row.shipWeek)}" onchange="orderEditorRows[${index}].shipWeek=this.value" /></td>
+      </tr>
+    `;
+  });
+
+  html += `
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ao-editor-actions">
+        <button class="btn btn-secondary" type="button" onclick="renderOrderEditorRows(orderEditorRows)">Reset View</button>
+        <button id="ao-editor-save-btn" class="btn btn-primary" type="button" onclick="saveOrderEditorData()">Save Changes</button>
+      </div>
+    </div>
+  `;
+
+  results.innerHTML = html;
+}
+
+function rowMatchesEditorGroup(row, group) {
+  const length = normalizeLength(row.length_value);
+  const groupType = String(group.groupType || "").toLowerCase();
+
+  if (groupType === "stud") {
+    return [92, 104, 116].includes(length);
+  }
+
+  if (groupType === "dimension") {
+    return length >= 8 && length <= 20 && ![92, 104, 116].includes(length);
+  }
+
+  if (groupType === "long") {
+    return length >= 22 && ![92, 104, 116].includes(length);
+  }
+
+  return false;
+}
+
+async function saveOrderEditorData() {
+  clearOrderEditorStatus();
+
+  const po = normalizeText(document.getElementById("ao-editor-po")?.value);
+  const size = normalizeText(document.getElementById("ao-editor-size")?.value);
+  const saveBtn = document.getElementById("ao-editor-save-btn");
+
+  if (!po || !size) {
+    setOrderEditorStatus("Please enter both CUST PO# and Size.", "error");
+    return;
+  }
+
+  if (!orderEditorRows.length) {
+    setOrderEditorStatus("No rows to save.", "error");
+    return;
+  }
+
+  const hasFreightColumn = inventoryRows.some(row => Object.prototype.hasOwnProperty.call(row, "freight"));
+  const matched = getRowsForOrderEditor(po, size);
+
+  if (!matched.length) {
+    setOrderEditorStatus("No matching Inventory rows found to update.", "error");
+    return;
+  }
+
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
+  }
+
+  try {
+    let updatedCount = 0;
+    let freightUpdatedCount = 0;
+
+    for (const group of orderEditorRows) {
+      const rowsForGroup = matched.filter(row => rowMatchesEditorGroup(row, group));
+
+      for (const row of rowsForGroup) {
+        if (!row.id) continue;
+
+        const payload = {
+          location: group.location || null,
+          so_number: group.so || null,
+          cost: parseEditorNumber(group.cost),
+          sold: group.sold || null,
+          ship_week: group.shipWeek || null
+        };
+
+        if (hasFreightColumn) {
+          payload.freight = parseEditorNumber(group.freight);
+          freightUpdatedCount++;
+        }
+
+        const { error } = await supabaseClient
+          .from("inventory")
+          .update(payload)
+          .eq("id", row.id);
+
+        if (error) throw error;
+
+        updatedCount++;
+      }
+    }
+
+    await loadActiveOrders();
+    fetchOrderEditorData();
+
+    const freightMessage = hasFreightColumn
+      ? ` Freight updated on ${freightUpdatedCount} row(s).`
+      : " Freight was skipped because the inventory.freight column was not found in Supabase.";
+
+    setOrderEditorStatus(`Saved successfully. Updated ${updatedCount} inventory row(s).${freightMessage} Active Orders refreshed automatically.`, "success");
+  } catch (error) {
+    console.error("Order editor save error:", error);
+    setOrderEditorStatus(error.message || "Could not save order changes.", "error");
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save Changes";
+    }
+  }
 }
 
 function renderActiveOrders() {
@@ -385,51 +1254,60 @@ function renderActiveOrders() {
   tbody.innerHTML = "";
 
   if (!customer) {
-    tbody.innerHTML = `<tr><td colspan="10" class="ao-empty">Select a customer to view active orders.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${ACTIVE_ORDER_COLUMN_COUNT}" class="ao-empty">Select a customer to view active orders.</td></tr>`;
     return;
   }
 
   const rows = getGroupedRows(customer);
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="ao-empty">No active orders found for this customer.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${ACTIVE_ORDER_COLUMN_COUNT}" class="ao-empty">No active orders found for this customer.</td></tr>`;
     return;
   }
 
-  const colors = [
-    "#f3f4f5",
-    "#E3F2FD",
-    "#E8F5E9",
-    "#FFF3E0",
-    "#F3E5F5",
-    "#E0F7FA",
-    "#FFFDE7",
-    "#FBE9E7"
-  ];
-
-  let currentSO = null;
-  let colorIndex = -1;
+  let currentPO = null;
+  let poColorIndex = -1;
 
   rows.forEach(row => {
-    if (row.so !== currentSO) {
-      currentSO = row.so;
-      colorIndex++;
+    if (row.po !== currentPO) {
+      currentPO = row.po;
+      poColorIndex++;
     }
 
+    const isLight = poColorIndex % 2 === 0;
+
     const tr = document.createElement("tr");
-    tr.style.background = colors[colorIndex % colors.length];
+    tr.className = isLight ? "ao-light-row" : "ao-dark-row";
 
     tr.innerHTML = `
-      <td>${row.location || ""}</td>
-      <td><span class="ao-pill">${row.so || ""}</span></td>
-      <td>${row.po || ""}</td>
-      <td>${row.size || ""}</td>
-      <td>${row.tally || ""}</td>
-      <td>${formatNumber(row.cost, 2)}</td>
-      <td>${formatNumber(row.sales_price, 2)}</td>
+      <td>${safeHtml(row.location)}</td>
+      <td><span class="ao-pill">${safeHtml(row.so)}</span></td>
+      <td>${safeHtml(row.po)}</td>
+      <td>${safeHtml(row.size)}</td>
+      <td>${safeHtml(row.tally)}</td>
+
+      <td>${formatMoney(row.grossCost, 2)}</td>
+      <td>${formatMoney(row.grossRunningCost, 2)}</td>
+      <td>${formatMoney(row.grossTransload, 2)}</td>
+      <td>${formatMoney(row.grossStorage, 2)}</td>
+      <td>${formatMoney(row.grossInterest, 2)}</td>
+      <td>${formatMoney(row.grossFreight, 2)}</td>
+      <td>${formatMoney(row.grossSalesPrice, 2)}</td>
+      <td>${formatMoney(row.grossMargin, 2)}</td>
+      <td>${formatMoney(row.grossRevenue, 2)}</td>
+
       <td>${formatNumber(row.mbf, 2)}</td>
-      <td>${formatDate(row.sold)}</td>
-      <td>${formatDate(row.ship_week)}</td>
+      <td>${safeHtml(row.sold)}</td>
+      <td>${safeHtml(row.shipWeek)}</td>
+
+      <td>${formatMoney(row.costPerMbf, 2)}</td>
+      <td>${formatMoney(row.runningCostPerMbf, 2)}</td>
+      <td>${formatMoney(row.transloadCostPerMbf, 2)}</td>
+      <td>${formatMoney(row.storageCostPerMbf, 2)}</td>
+      <td>${formatMoney(row.interestCostPerMbf, 2)}</td>
+      <td>${formatMoney(row.freightPerMbf, 2)}</td>
+      <td>${formatMoney(row.marginPerMbf, 2)}</td>
+      <td>${formatMoney(row.salesPricePerMbf, 2)}</td>
     `;
 
     tbody.appendChild(tr);
