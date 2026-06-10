@@ -500,6 +500,8 @@
   <script>
     const selectedRowIds = new Set();
 	let allInventoryRows = [];
+	let helperLocationSettingsRows = [];
+	let isCostSyncRunning = false;
 	let activeFilters = {};
 	let currentFilterMenu = null;
 
@@ -601,7 +603,15 @@
         if (error) throw error;
 
         cellEl.textContent = parsedValue === null ? "" : String(parsedValue);
-        setInventoryStatus("Cell updated successfully.", "success");
+
+        // Any edit can affect calculated cost fields. Recalculate immediately,
+        // then reload the table so TRANSLOAD / STORAGE / INTEREST / RUNNING COST update on screen.
+        await calculateAndSyncInventoryCostFields({ rowId });
+        await reloadInventoryRowsNoSync();
+        renderInventoryRows();
+        renderActiveFilterBar();
+
+        setInventoryStatus("Cell updated and cost fields recalculated.", "success");
       } catch (error) {
         console.error("Cell update error:", error);
         setInventoryStatus("Could not update the edited cell.", "error");
@@ -634,7 +644,224 @@
       return td;
     }
 
-async function loadInventoryRows() {
+
+function costNum(value) {
+  if (value === null || value === undefined || value === "") return 0;
+  const n = Number(String(value).replace(/,/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function costDateOnly(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function costDaysBetween(startValue, endValue) {
+  const start = costDateOnly(startValue);
+  const end = costDateOnly(endValue);
+  if (!start || !end) return 0;
+  return Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function normalizeCostLocation(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function getHelperForLocation(location) {
+  const target = normalizeCostLocation(location);
+  if (!target) return null;
+
+  return helperLocationSettingsRows.find(row =>
+    normalizeCostLocation(row.location) === target
+  ) || null;
+}
+
+function normalizeAnnualInterest(value) {
+  const n = costNum(value);
+  // Supports both 7.5 and 0.075 from Supabase.
+  return n > 1 ? n / 100 : n;
+}
+
+function nearlyEqual(a, b) {
+  const x = a === null || a === undefined || a === "" ? null : Number(a);
+  const y = b === null || b === undefined || b === "" ? null : Number(b);
+
+  if (x === null && y === null) return true;
+  if (x === null || y === null) return false;
+
+  return Math.abs(x - y) < 0.0001;
+}
+
+function roundCost(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  return Number(n.toFixed(4));
+}
+
+function calculateCostPayloadForRow(row, poCounts) {
+  const helper = getHelperForLocation(row.location);
+
+  const po = String(row.po_number || "").trim();
+  const mbf = costNum(row.mbf);
+  const cost = costNum(row.cost);
+  const received = row.received;
+  const invoicedOrToday = row.invoiced || new Date().toISOString().split("T")[0];
+
+  if (!helper) {
+    return {
+      transload: null,
+      storage: null,
+      interest: null,
+      running_cost: cost ? roundCost(cost) : null
+    };
+  }
+
+  const transloadFee = costNum(helper.transload_fee);
+  const storageFeeStartDay = costNum(helper.storage_fee_start_day || 30);
+  const storageFee = costNum(helper.storage_fee);
+  const annualInterest = normalizeAnnualInterest(helper.annual_interest);
+
+  let transload = null;
+  if (po) {
+    const count = poCounts[po] || 0;
+    if (count > 0) transload = transloadFee / count;
+  }
+
+  let storage = null;
+  if (mbf && received) {
+    const chargeStartDate = costDateOnly(received);
+    if (chargeStartDate) {
+      chargeStartDate.setDate(chargeStartDate.getDate() + storageFeeStartDay);
+      const days = Math.max(0, costDaysBetween(chargeStartDate, invoicedOrToday));
+      storage = mbf * storageFee * days;
+    }
+  }
+
+  let interest = null;
+  if (received && cost && mbf) {
+    const days = Math.max(0, costDaysBetween(received, invoicedOrToday));
+    interest = cost * mbf * (Math.pow(1 + (annualInterest / 365), days) - 1);
+  }
+
+  let runningCost = null;
+  if (mbf && cost) {
+    runningCost = cost + (((transload || 0) + (storage || 0) + (interest || 0)) / mbf);
+  }
+
+  return {
+    transload: roundCost(transload),
+    storage: roundCost(storage),
+    interest: roundCost(interest),
+    running_cost: roundCost(runningCost)
+  };
+}
+
+async function loadHelperLocationSettings() {
+  const { data, error } = await supabaseClient
+    .from("helper_location_settings")
+    .select("*")
+    .order("location", { ascending: true });
+
+  if (error) {
+    console.error("Helper location settings load error:", error);
+    helperLocationSettingsRows = [];
+    return;
+  }
+
+  helperLocationSettingsRows = data || [];
+  console.log("Inventory helper settings loaded:", helperLocationSettingsRows);
+}
+
+async function calculateAndSyncInventoryCostFields(options = {}) {
+  if (isCostSyncRunning) return 0;
+
+  isCostSyncRunning = true;
+
+  try {
+    await loadHelperLocationSettings();
+
+    const { data: latestRows, error } = await supabaseClient
+      .from("inventory")
+      .select("*");
+
+    if (error) throw error;
+
+    const rows = latestRows || [];
+    const poCounts = {};
+
+    rows.forEach(row => {
+      const po = String(row.po_number || "").trim();
+      if (!po) return;
+      poCounts[po] = (poCounts[po] || 0) + 1;
+    });
+
+    let rowsToCheck = rows;
+
+    // After a single-cell edit, recalc that row plus rows with same PO# because TRANSLOAD is split by PO count.
+    if (options.rowId) {
+      const editedRow = rows.find(row => String(row.id) === String(options.rowId));
+      if (editedRow && editedRow.po_number) {
+        rowsToCheck = rows.filter(row => String(row.po_number || "") === String(editedRow.po_number || ""));
+      } else if (editedRow) {
+        rowsToCheck = [editedRow];
+      }
+    }
+
+    const updates = [];
+
+    rowsToCheck.forEach(row => {
+      const calculated = calculateCostPayloadForRow(row, poCounts);
+
+      const needsUpdate =
+        !nearlyEqual(row.transload, calculated.transload) ||
+        !nearlyEqual(row.storage, calculated.storage) ||
+        !nearlyEqual(row.interest, calculated.interest) ||
+        !nearlyEqual(row.running_cost, calculated.running_cost);
+
+      if (needsUpdate) {
+        updates.push({ id: row.id, payload: calculated });
+      }
+    });
+
+    console.log("Inventory cost calculation sample:", rowsToCheck.slice(0, 10).map(row => ({
+      id: row.id,
+      location: row.location,
+      po_number: row.po_number,
+      mbf: row.mbf,
+      cost: row.cost,
+      received: row.received,
+      invoiced: row.invoiced,
+      calculated: calculateCostPayloadForRow(row, poCounts)
+    })));
+
+    for (const item of updates) {
+      const { error: updateError } = await supabaseClient
+        .from("inventory")
+        .update(item.payload)
+        .eq("id", item.id);
+
+      if (updateError) throw updateError;
+    }
+
+    if (updates.length) {
+      console.log(`Inventory cost fields synced for ${updates.length} row(s).`);
+    }
+
+    return updates.length;
+  } catch (error) {
+    console.error("Inventory cost sync error:", error);
+    setInventoryStatus("Inventory cost sync failed. Check Supabase columns/RLS.", "error");
+    return 0;
+  } finally {
+    isCostSyncRunning = false;
+  }
+}
+
+async function reloadInventoryRowsNoSync() {
   const { data, error } = await supabaseClient
     .from("inventory")
     .select("*")
@@ -643,10 +870,24 @@ async function loadInventoryRows() {
   if (error) {
     console.error("Inventory load error:", error);
     setInventoryStatus("Could not load inventory rows.", "error");
-    return;
+    return false;
   }
 
   allInventoryRows = data || [];
+  return true;
+}
+
+async function loadInventoryRows() {
+  const loaded = await reloadInventoryRowsNoSync();
+  if (!loaded) return;
+
+  // Backfill/update calculated cost fields on page load too. This fixes rows where
+  // INVOICED / RECEIVED / LOCATION / PO# were added later and calculated fields are blank.
+  const updatedCount = await calculateAndSyncInventoryCostFields();
+  if (updatedCount > 0) {
+    await reloadInventoryRowsNoSync();
+  }
+
   renderInventoryHeader();
   renderInventoryRows();
   renderActiveFilterBar();
