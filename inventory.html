@@ -310,6 +310,146 @@
     width: 100%;
   }
 }
+
+
+/* ===== Column Views + Summary Row ===== */
+.inventory-summary-row th {
+  background: linear-gradient(180deg, #eef7ea 0%, #dcedd4 100%) !important;
+  color: #0f4a63 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  min-height: 76px;
+  padding: 10px 10px !important;
+  border-bottom: 2px solid #156082 !important;
+  border-right: 1px solid rgba(21, 96, 130, 0.12) !important;
+}
+
+.inventory-summary-row th.summary-empty {
+  background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%) !important;
+  color: transparent !important;
+}
+
+.summary-metric-card {
+  min-height: 58px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(21, 96, 130, 0.16);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.summary-metric-label {
+  color: #64748b;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.summary-metric-value {
+  color: #0f4a63;
+  font-size: 17px;
+  font-weight: 950;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.summary-metric-subvalue {
+  color: #156082;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.summary-metric-card.two-line .summary-metric-value {
+  font-size: 15px;
+}
+
+.inventory-table-card .table th.draggable-column {
+  cursor: grab;
+  user-select: none;
+}
+
+.inventory-table-card .table th.drag-over {
+  outline: 3px solid rgba(21, 96, 130, 0.35);
+  outline-offset: -3px;
+}
+
+.column-view-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.column-view-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.column-view-item {
+  display: grid;
+  grid-template-columns: 28px 1fr 94px;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #dbe4ee;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.03);
+}
+
+.column-view-item.dragging {
+  opacity: 0.55;
+}
+
+.column-drag-handle {
+  cursor: grab;
+  color: #156082;
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.column-view-name {
+  font-size: 13px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.column-view-visible {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.column-view-visible input {
+  width: 16px;
+  height: 16px;
+}
+
+.saved-view-note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 </style>
 </head>
 <body>
@@ -350,9 +490,10 @@
 				class="inventory-search-input"
 				type="text"
 				placeholder="Search inventory..."
-				oninput="renderInventoryRows()"
+				oninput="renderInventoryTable()"
 				/>
 				<button class="btn btn-secondary" onclick="openDrawer('filterDrawer','filterOverlay')">Filter</button>
+				<button class="btn btn-secondary" onclick="openColumnViewDrawer()">Columns</button>
 			  </div>
 			  
 			  
@@ -459,7 +600,7 @@
   <div class="drawer-overlay" id="filterOverlay" onclick="closeDrawer('filterDrawer','filterOverlay')"></div>
 <div class="drawer" id="filterDrawer">
   <div class="drawer-header">
-    <div class="drawer-title">Saved Filters</div>
+    <div class="drawer-title">Saved Views / Filters</div>
     <button class="btn btn-secondary" onclick="closeDrawer('filterDrawer','filterOverlay')">Close</button>
   </div>
 
@@ -468,15 +609,16 @@
       <div class="card-pad">
         <div class="card-title-row">
      
-          <div class="card-title">Save Current Filter</div>
+          <div class="card-title">Save Current View</div>
         </div>
 
         <div class="form-group">
-          <label>Filter Name</label>
+          <label>View Name</label>
           <input id="saved_filter_name" type="text" placeholder="Example: Doug County ESLP" />
         </div>
 
-        <button class="btn btn-primary" onclick="saveCurrentFilter()">Save Filter</button>
+        <button class="btn btn-primary" onclick="saveCurrentFilter()">Save View</button>
+          <div class="saved-view-note">This saves the current filters, column order, and hidden/visible columns.</div>
       </div>
     </section>
 
@@ -484,7 +626,7 @@
       <div class="card-pad">
         <div class="card-title-row">
 
-          <div class="card-title">Favourite Filters</div>
+          <div class="card-title">Saved Views</div>
         </div>
 
         <div id="saved-filter-list" class="saved-filter-list"></div>
@@ -492,6 +634,35 @@
     </section>
   </div>
 </div>
+
+
+
+  <div class="drawer-overlay" id="columnViewOverlay" onclick="closeDrawer('columnViewDrawer','columnViewOverlay')"></div>
+  <div class="drawer" id="columnViewDrawer">
+    <div class="drawer-header">
+      <div class="drawer-title">Column View</div>
+      <button class="btn btn-secondary" onclick="closeDrawer('columnViewDrawer','columnViewOverlay')">Close</button>
+    </div>
+
+    <div class="drawer-body">
+      <section class="card" style="margin-bottom:18px;">
+        <div class="card-pad">
+          <div class="card-title-row">
+            <div class="card-title">Show / Hide & Reorder Columns</div>
+          </div>
+
+          <div class="column-view-toolbar">
+            <button class="btn btn-secondary btn-sm" onclick="showAllInventoryColumns()">Show All</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetInventoryColumnView()">Reset Default</button>
+          </div>
+
+          <div class="saved-view-note">Drag columns here or directly drag table headers to change the order. Uncheck columns to hide them.</div>
+          <div id="column-view-list" class="column-view-list" style="margin-top:14px;"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
 
   <script src="layout.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -504,6 +675,10 @@
 	let isCostSyncRunning = false;
 	let activeFilters = {};
 	let currentFilterMenu = null;
+	let columnOrder = [];
+	let hiddenColumnFields = new Set();
+	let draggedColumnField = null;
+	const INVENTORY_COLUMN_VIEW_STORAGE_KEY = "inventory_column_view_v1";
 
     const inventoryColumns = [
       { label: "SKU", field: "sku", type: "text" },
@@ -542,8 +717,223 @@
       { label: "NOTE", field: "note", type: "text" }
     ];
 
+function getDefaultColumnOrder() {
+  return inventoryColumns.map(column => column.field);
+}
+
+function getColumnByField(field) {
+  return inventoryColumns.find(column => column.field === field);
+}
+
+function ensureColumnViewState() {
+  const defaults = getDefaultColumnOrder();
+
+  if (!Array.isArray(columnOrder) || !columnOrder.length) {
+    columnOrder = [...defaults];
+  }
+
+  columnOrder = columnOrder.filter(field => defaults.includes(field));
+
+  defaults.forEach(field => {
+    if (!columnOrder.includes(field)) columnOrder.push(field);
+  });
+
+  hiddenColumnFields = new Set(
+    Array.from(hiddenColumnFields || []).filter(field => defaults.includes(field))
+  );
+}
+
+function getOrderedColumns() {
+  ensureColumnViewState();
+  return columnOrder
+    .map(field => getColumnByField(field))
+    .filter(Boolean);
+}
+
+function getVisibleColumns() {
+  return getOrderedColumns().filter(column => !hiddenColumnFields.has(column.field));
+}
+
+function saveColumnViewStateToLocal() {
+  ensureColumnViewState();
+  localStorage.setItem(INVENTORY_COLUMN_VIEW_STORAGE_KEY, JSON.stringify({
+    columnOrder,
+    hiddenColumns: Array.from(hiddenColumnFields)
+  }));
+}
+
+function loadColumnViewStateFromLocal() {
+  try {
+    const raw = localStorage.getItem(INVENTORY_COLUMN_VIEW_STORAGE_KEY);
+    if (!raw) {
+      columnOrder = getDefaultColumnOrder();
+      hiddenColumnFields = new Set();
+      return;
+    }
+
+    const parsed = JSON.parse(raw);
+    columnOrder = Array.isArray(parsed.columnOrder) ? parsed.columnOrder : getDefaultColumnOrder();
+    hiddenColumnFields = new Set(Array.isArray(parsed.hiddenColumns) ? parsed.hiddenColumns : []);
+    ensureColumnViewState();
+  } catch (error) {
+    console.error("Column view local load error:", error);
+    columnOrder = getDefaultColumnOrder();
+    hiddenColumnFields = new Set();
+  }
+}
+
+function rerenderInventoryTableWithCurrentView() {
+  renderInventoryHeader();
+  renderInventoryRows();
+  renderActiveFilterBar();
+  renderColumnViewList();
+  saveColumnViewStateToLocal();
+}
+
+function moveInventoryColumn(field, targetField) {
+  if (!field || !targetField || field === targetField) return;
+
+  ensureColumnViewState();
+
+  const fromIndex = columnOrder.indexOf(field);
+  const toIndex = columnOrder.indexOf(targetField);
+
+  if (fromIndex === -1 || toIndex === -1) return;
+
+  const [moved] = columnOrder.splice(fromIndex, 1);
+  columnOrder.splice(toIndex, 0, moved);
+
+  rerenderInventoryTableWithCurrentView();
+}
+
+function openColumnViewDrawer() {
+  renderColumnViewList();
+  openDrawer("columnViewDrawer", "columnViewOverlay");
+}
+
+function renderColumnViewList() {
+  const list = document.getElementById("column-view-list");
+  if (!list) return;
+
+  ensureColumnViewState();
+  list.innerHTML = "";
+
+  getOrderedColumns().forEach(column => {
+    const item = document.createElement("div");
+    item.className = "column-view-item";
+    item.draggable = true;
+    item.dataset.field = column.field;
+
+    item.innerHTML = `
+      <div class="column-drag-handle">⋮⋮</div>
+      <div class="column-view-name">${escapeHtml(column.label)}</div>
+      <label class="column-view-visible">
+        <input type="checkbox" ${hiddenColumnFields.has(column.field) ? "" : "checked"} onchange="toggleInventoryColumnVisibility('${column.field}', this.checked)">
+        Show
+      </label>
+    `;
+
+    item.addEventListener("dragstart", function () {
+      draggedColumnField = column.field;
+      item.classList.add("dragging");
+    });
+
+    item.addEventListener("dragend", function () {
+      draggedColumnField = null;
+      item.classList.remove("dragging");
+    });
+
+    item.addEventListener("dragover", function (e) {
+      e.preventDefault();
+    });
+
+    item.addEventListener("drop", function (e) {
+      e.preventDefault();
+      moveInventoryColumn(draggedColumnField, column.field);
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function toggleInventoryColumnVisibility(field, isVisible) {
+  if (isVisible) hiddenColumnFields.delete(field);
+  else hiddenColumnFields.add(field);
+
+  rerenderInventoryTableWithCurrentView();
+}
+
+function showAllInventoryColumns() {
+  hiddenColumnFields = new Set();
+  rerenderInventoryTableWithCurrentView();
+  setInventoryStatus("All columns visible.", "success");
+}
+
+function resetInventoryColumnView() {
+  columnOrder = getDefaultColumnOrder();
+  hiddenColumnFields = new Set();
+  rerenderInventoryTableWithCurrentView();
+  setInventoryStatus("Column view reset.", "success");
+}
+
+function formatSummaryNumber(value, digits = 2) {
+  const n = Number(value || 0);
+  if (!Number.isFinite(n)) return "";
+  return n.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+
+function getSummaryNumber(row, field) {
+  const value = row?.[field];
+  if (value === null || value === undefined || value === "") return 0;
+  const n = Number(String(value).replace(/,/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function isBlankSummaryValue(value) {
+  return value === null || value === undefined || String(value).trim() === "";
+}
+
+function calculateInventorySummaryValues(rows) {
+  const totalMbf = rows.reduce((sum, row) => sum + getSummaryNumber(row, "mbf"), 0);
+
+  const weightedAverage = field => {
+    if (!totalMbf) return 0;
+    const weighted = rows.reduce((sum, row) => {
+      return sum + (getSummaryNumber(row, field) * getSummaryNumber(row, "mbf"));
+    }, 0);
+    return weighted / totalMbf;
+  };
+
+  const subtotal = field => rows.reduce((sum, row) => sum + getSummaryNumber(row, field), 0);
+
+  const openMbf = rows.reduce((sum, row) => {
+    const isOpen =
+      isBlankSummaryValue(row.sales_price) &&
+      isBlankSummaryValue(row.cust_po_number) &&
+      (row.subtotal === true || row.subtotal === 1 || row.subtotal === "1" || row.subtotal === "true");
+
+    return isOpen ? sum + getSummaryNumber(row, "mbf") : sum;
+  }, 0);
+
+  const countLengthValues = rows.filter(row => !isBlankSummaryValue(row.length_value)).length;
+  const maxNumberGroup = rows.reduce((max, row) => Math.max(max, getSummaryNumber(row, "number_group")), 0);
+
+  return {
+    length_value: String(countLengthValues || 0),
+    mbf: `${formatSummaryNumber(openMbf, 2)}\n${formatSummaryNumber(totalMbf, 2)}`,
+    sales_price: formatSummaryNumber(weightedAverage("sales_price"), 2),
+    number_group: String(maxNumberGroup || 0),
+    cost: formatSummaryNumber(weightedAverage("cost"), 2),
+    running_cost: formatSummaryNumber(weightedAverage("running_cost"), 2),
+    transload: formatSummaryNumber(subtotal("transload"), 2),
+    storage: formatSummaryNumber(subtotal("storage"), 2),
+    interest: formatSummaryNumber(subtotal("interest"), 2)
+  };
+}
+
     document.addEventListener("DOMContentLoaded", function () {
       loadSidebar("inventory");
+      loadColumnViewStateFromLocal();
       loadInventoryRows();
     });
 
@@ -608,7 +998,7 @@
         // then reload the table so TRANSLOAD / STORAGE / INTEREST / RUNNING COST update on screen.
         await calculateAndSyncInventoryCostFields({ rowId });
         await reloadInventoryRowsNoSync();
-        renderInventoryRows();
+        renderInventoryTable();
         renderActiveFilterBar();
 
         setInventoryStatus("Cell updated and cost fields recalculated.", "success");
@@ -888,10 +1278,14 @@ async function loadInventoryRows() {
     await reloadInventoryRowsNoSync();
   }
 
-  renderInventoryHeader();
-  renderInventoryRows();
+  renderInventoryTable();
   renderActiveFilterBar();
   loadSavedFilters();
+}
+
+function renderInventoryTable() {
+  renderInventoryHeader();
+  renderInventoryRows();
 }
 
 
@@ -899,15 +1293,97 @@ function renderInventoryHeader() {
   const head = document.getElementById("inventory-table-head");
   if (!head) return;
 
+  const thead = head.parentElement;
+  let summaryRow = document.getElementById("inventory-summary-row");
+
+  if (!summaryRow) {
+    summaryRow = document.createElement("tr");
+    summaryRow.id = "inventory-summary-row";
+    summaryRow.className = "inventory-summary-row";
+    thead.insertBefore(summaryRow, head);
+  }
+
+  const rows = getFilteredRows();
+  const summary = calculateInventorySummaryValues(rows);
+  const visibleColumns = getVisibleColumns();
+
+  summaryRow.innerHTML = `<th class="summary-empty"></th>`;
+
+  const summaryLabels = {
+    length_value: "Count",
+    mbf: "Open / Total",
+    sales_price: "Weighted Avg",
+    number_group: "Max #",
+    cost: "Weighted Avg",
+    running_cost: "Weighted Avg",
+    transload: "Subtotal",
+    storage: "Subtotal",
+    interest: "Subtotal"
+  };
+
+  visibleColumns.forEach(column => {
+    const th = document.createElement("th");
+    const value = summary[column.field] || "";
+
+    if (!value) {
+      th.className = "summary-empty";
+      summaryRow.appendChild(th);
+      return;
+    }
+
+    const parts = String(value).split("\n");
+    const mainValue = parts[0] || "";
+    const subValue = parts.slice(1).join(" / ");
+    const label = summaryLabels[column.field] || "Summary";
+
+    th.innerHTML = `
+      <div class="summary-metric-card ${subValue ? "two-line" : ""}">
+        <div class="summary-metric-label">${escapeHtml(label)}</div>
+        <div class="summary-metric-value">${escapeHtml(mainValue)}</div>
+        ${subValue ? `<div class="summary-metric-subvalue">Total: ${escapeHtml(subValue)}</div>` : ""}
+      </div>
+    `;
+
+    summaryRow.appendChild(th);
+  });
+
   head.innerHTML = `<th>Select</th>`;
 
-  inventoryColumns.forEach(column => {
+  visibleColumns.forEach(column => {
     const th = document.createElement("th");
-    th.className = "filterable-th";
+    th.className = "filterable-th draggable-column";
+    th.draggable = true;
+    th.dataset.field = column.field;
     th.innerHTML = `
       ${column.label}
       <button class="th-filter-btn" onclick="openColumnFilter(event, '${column.field}')">▾</button>
     `;
+
+    th.addEventListener("dragstart", function () {
+      draggedColumnField = column.field;
+      th.classList.add("drag-over");
+    });
+
+    th.addEventListener("dragend", function () {
+      draggedColumnField = null;
+      document.querySelectorAll("th.drag-over").forEach(el => el.classList.remove("drag-over"));
+    });
+
+    th.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      th.classList.add("drag-over");
+    });
+
+    th.addEventListener("dragleave", function () {
+      th.classList.remove("drag-over");
+    });
+
+    th.addEventListener("drop", function (e) {
+      e.preventDefault();
+      th.classList.remove("drag-over");
+      moveInventoryColumn(draggedColumnField, column.field);
+    });
+
     head.appendChild(th);
   });
 }
@@ -938,7 +1414,7 @@ function renderInventoryRows() {
     checkboxTd.appendChild(checkbox);
     tr.appendChild(checkboxTd);
 
-    inventoryColumns.forEach(column => {
+    getVisibleColumns().forEach(column => {
       tr.appendChild(createEditableCell(row, column));
     });
 
@@ -1261,14 +1737,18 @@ async function saveCurrentFilter() {
     return;
   }
 
-  if (Object.keys(activeFilters).length === 0) {
-    setInventoryStatus("Please apply at least one column filter first.", "error");
-    return;
-  }
+  ensureColumnViewState();
+
+  const savedView = {
+    __type: "inventory_view_v2",
+    filters: activeFilters,
+    columnOrder,
+    hiddenColumns: Array.from(hiddenColumnFields)
+  };
 
   const { error } = await supabaseClient
     .from("inventory_saved_filters")
-    .insert([{ name, filters: activeFilters }]);
+    .insert([{ name, filters: savedView }]);
 
   if (error) {
     console.error("Save filter error:", error);
@@ -1282,11 +1762,22 @@ async function saveCurrentFilter() {
 }
 
 function applySavedFilter(filters) {
-  activeFilters = filters || {};
-  renderInventoryRows();
+  if (filters && filters.__type === "inventory_view_v2") {
+    activeFilters = filters.filters || {};
+    columnOrder = Array.isArray(filters.columnOrder) ? filters.columnOrder : getDefaultColumnOrder();
+    hiddenColumnFields = new Set(Array.isArray(filters.hiddenColumns) ? filters.hiddenColumns : []);
+    ensureColumnViewState();
+    saveColumnViewStateToLocal();
+  } else {
+    // Backward compatible with old saved filters.
+    activeFilters = filters || {};
+  }
+
+  renderInventoryTable();
   renderActiveFilterBar();
+  renderColumnViewList();
   closeDrawer("filterDrawer", "filterOverlay");
-  setInventoryStatus("Saved filter applied.", "success");
+  setInventoryStatus("Saved view applied.", "success");
 }
 
 async function deleteSavedFilter(id) {
@@ -1345,7 +1836,7 @@ function getFilteredRows() {
 
     if (!searchTerm) return true;
 
-    return inventoryColumns.some(column => {
+    return getVisibleColumns().some(column => {
       const value = row[column.field];
 
       if (value === null || value === undefined) return false;
@@ -1468,7 +1959,7 @@ function applyColumnFilter(field) {
     currentFilterMenu = null;
   }
 
-  renderInventoryRows();
+  renderInventoryTable();
   renderActiveFilterBar();
 }
 
@@ -1479,7 +1970,7 @@ function renderActiveFilterBar() {
   bar.innerHTML = "";
 
   Object.keys(activeFilters).forEach(field => {
-    const col = inventoryColumns.find(c => c.field === field);
+    const col = getColumnByField(field);
     const selectedCount = activeFilters[field]?.length ?? 0;
 
     const pill = document.createElement("div");
@@ -1494,7 +1985,7 @@ function renderActiveFilterBar() {
 
 function removeFilter(field) {
   delete activeFilters[field];
-  renderInventoryRows();
+  renderInventoryTable();
   renderActiveFilterBar();
 }
 
