@@ -369,6 +369,208 @@
     border-radius: 14px;
   }
 
+
+  /* ===== Active Orders Column Views ===== */
+  .ao-columns-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.42);
+    z-index: 2400;
+    display: none;
+    justify-content: flex-end;
+  }
+
+  .ao-columns-overlay.open { display: flex; }
+
+  .ao-columns-drawer {
+    width: min(520px, 96vw);
+    height: 100vh;
+    background: #ffffff;
+    border-left: 1px solid #dbe4ee;
+    box-shadow: -18px 0 48px rgba(15, 23, 42, 0.22);
+    padding: 24px;
+    overflow-y: auto;
+  }
+
+  .ao-columns-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 18px;
+  }
+
+  .ao-columns-head h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+
+  .ao-columns-head p {
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .ao-columns-section {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #dbe4ee;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+  }
+
+  .ao-columns-section-title {
+    margin-bottom: 12px;
+    color: #156082;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .ao-view-save-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .ao-view-save-row input {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid #dbe4ee;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #f1f5f9;
+    font-weight: 800;
+    outline: none;
+  }
+
+  .ao-view-save-row input:focus {
+    background: #ffffff;
+    box-shadow: 0 0 0 2px rgba(21, 96, 130, 0.16);
+  }
+
+  .ao-columns-note {
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .ao-columns-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ao-column-list,
+  .ao-saved-view-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ao-column-item,
+  .ao-saved-view-item {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #e5edf4;
+    border-radius: 12px;
+    padding: 11px 12px;
+    box-shadow: 0 5px 14px rgba(15, 23, 42, 0.03);
+  }
+
+  .ao-column-item.dragging,
+  .ao-th-dragging { opacity: 0.45; }
+
+  .ao-column-grip {
+    color: #94a3b8;
+    cursor: grab;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .ao-column-name,
+  .ao-saved-view-name {
+    font-size: 13px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+
+  .ao-column-sub,
+  .ao-saved-view-sub {
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .ao-column-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .ao-column-toggle input {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+  }
+
+  .ao-saved-view-item { grid-template-columns: 1fr auto auto; }
+  .ao-saved-view-actions { display: flex; gap: 8px; }
+
+  .ao-saved-empty {
+    padding: 14px;
+    color: #64748b;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .ao-table th.ao-draggable-th {
+    cursor: grab;
+    user-select: none;
+  }
+
+  .ao-table th.ao-drop-target {
+    box-shadow: inset 3px 0 0 #156082;
+    background: #dcebf2 !important;
+  }
+
+  .ao-th-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .ao-th-grip {
+    color: #94a3b8;
+    font-size: 12px;
+  }
+
+
   @media(max-width: 760px) {
     .ao-editor-overlay { padding: 12px; }
     .ao-editor-modal { padding: 16px; }
@@ -418,6 +620,7 @@
 
   <div class="page-actions">
     <button class="btn btn-primary" onclick="openOrderEditor()">Edit Orders</button>
+    <button class="btn btn-secondary" onclick="openActiveOrderColumns()">Columns</button>
     <button class="btn btn-secondary" onclick="loadActiveOrders()">Refresh</button>
   </div>
 </div>
@@ -442,35 +645,7 @@
 
   <div class="table-wrap">
     <table class="ao-table">
-      <thead>
-        <tr>
-          <th>Location</th>
-          <th>SO#</th>
-          <th>Cust PO#</th>
-          <th>Size</th>
-          <th>Tally</th>
-          <th>Cost</th>
-          <th>Running Cost</th>
-          <th>Transload</th>
-          <th>Storage</th>
-          <th>Interest</th>
-          <th>Freight</th>
-          <th>Sales Price</th>
-          <th>Margin</th>
-          <th>Revenue</th>
-          <th>MBF</th>
-          <th>Sold</th>
-          <th>Ship Week</th>
-          <th>Cost</th>
-          <th>Running Cost</th>
-          <th>Transload Cost</th>
-          <th>Storage Cost</th>
-          <th>Interest Cost</th>
-          <th>Freight</th>
-          <th>Margin</th>
-          <th>Sales Price</th>
-        </tr>
-      </thead>
+      <thead id="active-orders-head"></thead>
       <tbody id="active-orders-body"></tbody>
     </table>
   </div>
@@ -479,6 +654,41 @@
   </main>
 </div>
 
+
+<div id="ao-columns-overlay" class="ao-columns-overlay" onclick="handleActiveOrderColumnsOverlayClick(event)">
+  <aside class="ao-columns-drawer" role="dialog" aria-modal="true" aria-labelledby="ao-columns-title">
+    <div class="ao-columns-head">
+      <div>
+        <h2 id="ao-columns-title">Column Views</h2>
+        <p>Drag columns, hide/show fields, and save your preferred Active Orders view.</p>
+      </div>
+      <button class="ao-editor-close" type="button" onclick="closeActiveOrderColumns()">×</button>
+    </div>
+
+    <div class="ao-columns-section">
+      <div class="ao-columns-section-title">Save Current View</div>
+      <div class="ao-view-save-row">
+        <input id="ao-view-name" type="text" placeholder="Example: Compact Margin View" />
+        <button class="btn btn-primary" type="button" onclick="saveActiveOrderView()">Save View</button>
+      </div>
+      <div class="ao-columns-note">Saved views include column order, hidden columns, and selected customer.</div>
+    </div>
+
+    <div class="ao-columns-section">
+      <div class="ao-columns-section-title">Columns</div>
+      <div class="ao-columns-actions">
+        <button class="btn btn-secondary btn-sm" type="button" onclick="showAllActiveOrderColumns()">Show All</button>
+        <button class="btn btn-secondary btn-sm" type="button" onclick="resetActiveOrderColumns()">Reset Default</button>
+      </div>
+      <div id="ao-column-list" class="ao-column-list"></div>
+    </div>
+
+    <div class="ao-columns-section">
+      <div class="ao-columns-section-title">Saved Views</div>
+      <div id="ao-saved-view-list" class="ao-saved-view-list"></div>
+    </div>
+  </aside>
+</div>
 
 <div id="ao-editor-overlay" class="ao-editor-overlay" onclick="handleOrderEditorOverlayClick(event)">
   <div class="ao-editor-modal" role="dialog" aria-modal="true" aria-labelledby="ao-editor-title">
@@ -523,6 +733,43 @@ let inventoryRows = [];
 
 const ACTIVE_ORDER_COLUMN_COUNT = 25;
 
+
+const ACTIVE_ORDER_COLUMN_STATE_KEY = "activeOrdersColumnStateV1";
+const ACTIVE_ORDER_VIEWS_KEY = "activeOrdersSavedViewsV1";
+
+const AO_COLUMNS = [
+  { field: "location", label: "Location", type: "text" },
+  { field: "so", label: "SO#", type: "pill" },
+  { field: "po", label: "Cust PO#", type: "text" },
+  { field: "size", label: "Size", type: "text" },
+  { field: "tally", label: "Tally", type: "text" },
+  { field: "grossCost", label: "Cost", type: "money" },
+  { field: "grossRunningCost", label: "Running Cost", type: "money" },
+  { field: "grossTransload", label: "Transload", type: "money" },
+  { field: "grossStorage", label: "Storage", type: "money" },
+  { field: "grossInterest", label: "Interest", type: "money" },
+  { field: "grossFreight", label: "Freight", type: "money" },
+  { field: "grossSalesPrice", label: "Sales Price", type: "money" },
+  { field: "grossMargin", label: "Margin", type: "money" },
+  { field: "grossRevenue", label: "Revenue", type: "money" },
+  { field: "mbf", label: "MBF", type: "number" },
+  { field: "sold", label: "Sold", type: "text" },
+  { field: "shipWeek", label: "Ship Week", type: "text" },
+  { field: "costPerMbf", label: "Cost", type: "money" },
+  { field: "runningCostPerMbf", label: "Running Cost", type: "money" },
+  { field: "transloadCostPerMbf", label: "Transload Cost", type: "money" },
+  { field: "storageCostPerMbf", label: "Storage Cost", type: "money" },
+  { field: "interestCostPerMbf", label: "Interest Cost", type: "money" },
+  { field: "freightPerMbf", label: "Freight", type: "money" },
+  { field: "marginPerMbf", label: "Margin", type: "money" },
+  { field: "salesPricePerMbf", label: "Sales Price", type: "money" }
+];
+
+let activeOrderColumnOrder = AO_COLUMNS.map(col => col.field);
+let activeOrderHiddenColumns = new Set();
+let activeOrderDraggedColumnField = null;
+let activeOrderDraggedDrawerField = null;
+
 /*
   Active Orders logic follows the same grouping/calculation style as the
   SELLER ACTIVE ORDERS Google Sheet script:
@@ -537,6 +784,7 @@ const ACTIVE_ORDER_COLUMN_COUNT = 25;
 document.addEventListener("DOMContentLoaded", async function () {
   await requireLogin();
   loadSidebar("active-orders");
+  loadActiveOrderColumnState();
   await loadActiveOrders();
 });
 
@@ -925,6 +1173,301 @@ function getGroupedRows(customer) {
 }
 
 
+// ===== ACTIVE ORDERS COLUMN VIEWS =====
+function getAoColumn(field) {
+  return AO_COLUMNS.find(col => col.field === field);
+}
+
+function getDefaultAoColumnOrder() {
+  return AO_COLUMNS.map(col => col.field);
+}
+
+function loadActiveOrderColumnState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ACTIVE_ORDER_COLUMN_STATE_KEY) || "{}");
+    const validFields = new Set(AO_COLUMNS.map(col => col.field));
+    const savedOrder = Array.isArray(saved.order) ? saved.order.filter(field => validFields.has(field)) : [];
+    const missingFields = AO_COLUMNS.map(col => col.field).filter(field => !savedOrder.includes(field));
+
+    activeOrderColumnOrder = [...savedOrder, ...missingFields];
+    activeOrderHiddenColumns = new Set(Array.isArray(saved.hidden) ? saved.hidden.filter(field => validFields.has(field)) : []);
+  } catch (error) {
+    console.warn("Could not load Active Orders column state:", error);
+    activeOrderColumnOrder = getDefaultAoColumnOrder();
+    activeOrderHiddenColumns = new Set();
+  }
+}
+
+function saveActiveOrderColumnState() {
+  localStorage.setItem(ACTIVE_ORDER_COLUMN_STATE_KEY, JSON.stringify({
+    order: activeOrderColumnOrder,
+    hidden: [...activeOrderHiddenColumns]
+  }));
+}
+
+function getVisibleAoColumns() {
+  return activeOrderColumnOrder
+    .map(field => getAoColumn(field))
+    .filter(Boolean)
+    .filter(col => !activeOrderHiddenColumns.has(col.field));
+}
+
+function openActiveOrderColumns() {
+  renderActiveOrderColumnDrawer();
+  const overlay = document.getElementById("ao-columns-overlay");
+  if (overlay) overlay.classList.add("open");
+}
+
+function closeActiveOrderColumns() {
+  const overlay = document.getElementById("ao-columns-overlay");
+  if (overlay) overlay.classList.remove("open");
+}
+
+function handleActiveOrderColumnsOverlayClick(event) {
+  if (event.target && event.target.id === "ao-columns-overlay") closeActiveOrderColumns();
+}
+
+function moveAoColumn(sourceField, targetField) {
+  if (!sourceField || !targetField || sourceField === targetField) return;
+
+  const fromIndex = activeOrderColumnOrder.indexOf(sourceField);
+  const toIndex = activeOrderColumnOrder.indexOf(targetField);
+  if (fromIndex === -1 || toIndex === -1) return;
+
+  const [moved] = activeOrderColumnOrder.splice(fromIndex, 1);
+  activeOrderColumnOrder.splice(toIndex, 0, moved);
+
+  saveActiveOrderColumnState();
+  renderActiveOrders();
+  renderActiveOrderColumnDrawer();
+}
+
+function toggleAoColumn(field, checked) {
+  if (checked) activeOrderHiddenColumns.delete(field);
+  else activeOrderHiddenColumns.add(field);
+
+  if (activeOrderHiddenColumns.size >= AO_COLUMNS.length) {
+    activeOrderHiddenColumns.delete(field);
+    showAppModal({ type: "error", title: "At least one column required", message: "Please keep at least one column visible." });
+  }
+
+  saveActiveOrderColumnState();
+  renderActiveOrders();
+  renderActiveOrderColumnDrawer();
+}
+
+function showAllActiveOrderColumns() {
+  activeOrderHiddenColumns = new Set();
+  saveActiveOrderColumnState();
+  renderActiveOrders();
+  renderActiveOrderColumnDrawer();
+}
+
+function resetActiveOrderColumns() {
+  activeOrderColumnOrder = getDefaultAoColumnOrder();
+  activeOrderHiddenColumns = new Set();
+  saveActiveOrderColumnState();
+  renderActiveOrders();
+  renderActiveOrderColumnDrawer();
+}
+
+function renderActiveOrderColumnDrawer() {
+  const list = document.getElementById("ao-column-list");
+  const savedList = document.getElementById("ao-saved-view-list");
+
+  if (list) {
+    list.innerHTML = activeOrderColumnOrder.map(field => {
+      const col = getAoColumn(field);
+      if (!col) return "";
+      const isVisible = !activeOrderHiddenColumns.has(field);
+
+      return `
+        <div class="ao-column-item" draggable="true" data-field="${safeHtml(field)}"
+          ondragstart="handleAoDrawerDragStart(event, '${safeHtml(field)}')"
+          ondragover="handleAoDrawerDragOver(event)"
+          ondrop="handleAoDrawerDrop(event, '${safeHtml(field)}')"
+          ondragend="handleAoDrawerDragEnd(event)">
+          <div class="ao-column-grip">⋮⋮</div>
+          <div>
+            <div class="ao-column-name">${safeHtml(col.label)}</div>
+            <div class="ao-column-sub">${safeHtml(col.field)}</div>
+          </div>
+          <label class="ao-column-toggle">
+            <input type="checkbox" ${isVisible ? "checked" : ""} onchange="toggleAoColumn('${safeHtml(field)}', this.checked)">
+            Show
+          </label>
+        </div>
+      `;
+    }).join("");
+  }
+
+  if (savedList) {
+    const views = getActiveOrderSavedViews();
+    if (!views.length) {
+      savedList.innerHTML = `<div class="ao-saved-empty">No saved views yet.</div>`;
+      return;
+    }
+
+    savedList.innerHTML = views.map((view, index) => `
+      <div class="ao-saved-view-item">
+        <div>
+          <div class="ao-saved-view-name">${safeHtml(view.name)}</div>
+          <div class="ao-saved-view-sub">${safeHtml(view.customer || "All customers")} · ${AO_COLUMNS.length - (view.hidden || []).length} visible columns</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" type="button" onclick="applyActiveOrderView(${index})">Apply</button>
+        <button class="btn btn-danger btn-sm" type="button" onclick="deleteActiveOrderView(${index})">Delete</button>
+      </div>
+    `).join("");
+  }
+}
+
+function handleAoDrawerDragStart(event, field) {
+  activeOrderDraggedDrawerField = field;
+  event.currentTarget.classList.add("dragging");
+  event.dataTransfer.effectAllowed = "move";
+}
+
+function handleAoDrawerDragOver(event) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+}
+
+function handleAoDrawerDrop(event, targetField) {
+  event.preventDefault();
+  moveAoColumn(activeOrderDraggedDrawerField, targetField);
+}
+
+function handleAoDrawerDragEnd(event) {
+  event.currentTarget.classList.remove("dragging");
+  activeOrderDraggedDrawerField = null;
+}
+
+function handleAoHeaderDragStart(event, field) {
+  activeOrderDraggedColumnField = field;
+  event.currentTarget.classList.add("ao-th-dragging");
+  event.dataTransfer.effectAllowed = "move";
+}
+
+function handleAoHeaderDragOver(event) {
+  event.preventDefault();
+  event.currentTarget.classList.add("ao-drop-target");
+  event.dataTransfer.dropEffect = "move";
+}
+
+function handleAoHeaderDragLeave(event) {
+  event.currentTarget.classList.remove("ao-drop-target");
+}
+
+function handleAoHeaderDrop(event, targetField) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("ao-drop-target");
+  moveAoColumn(activeOrderDraggedColumnField, targetField);
+}
+
+function handleAoHeaderDragEnd(event) {
+  event.currentTarget.classList.remove("ao-th-dragging");
+  document.querySelectorAll(".ao-drop-target").forEach(el => el.classList.remove("ao-drop-target"));
+  activeOrderDraggedColumnField = null;
+}
+
+function getActiveOrderSavedViews() {
+  try {
+    const views = JSON.parse(localStorage.getItem(ACTIVE_ORDER_VIEWS_KEY) || "[]");
+    return Array.isArray(views) ? views : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function setActiveOrderSavedViews(views) {
+  localStorage.setItem(ACTIVE_ORDER_VIEWS_KEY, JSON.stringify(views));
+}
+
+function saveActiveOrderView() {
+  const input = document.getElementById("ao-view-name");
+  const name = normalizeText(input?.value);
+
+  if (!name) {
+    showAppModal({ type: "error", title: "View name required", message: "Please enter a name for this saved view." });
+    return;
+  }
+
+  const select = document.getElementById("customer-select");
+  const views = getActiveOrderSavedViews();
+  const view = {
+    name,
+    customer: select ? select.value : "",
+    order: [...activeOrderColumnOrder],
+    hidden: [...activeOrderHiddenColumns],
+    saved_at: new Date().toISOString()
+  };
+
+  const existingIndex = views.findIndex(v => String(v.name).toLowerCase() === name.toLowerCase());
+  if (existingIndex >= 0) views[existingIndex] = view;
+  else views.push(view);
+
+  setActiveOrderSavedViews(views);
+  if (input) input.value = "";
+  renderActiveOrderColumnDrawer();
+  showAppModal({ type: "success", title: "View Saved", message: `Saved Active Orders view: ${name}` });
+}
+
+function applyActiveOrderView(index) {
+  const views = getActiveOrderSavedViews();
+  const view = views[index];
+  if (!view) return;
+
+  const validFields = new Set(AO_COLUMNS.map(col => col.field));
+  const savedOrder = Array.isArray(view.order) ? view.order.filter(field => validFields.has(field)) : [];
+  activeOrderColumnOrder = [...savedOrder, ...AO_COLUMNS.map(col => col.field).filter(field => !savedOrder.includes(field))];
+  activeOrderHiddenColumns = new Set(Array.isArray(view.hidden) ? view.hidden.filter(field => validFields.has(field)) : []);
+
+  const select = document.getElementById("customer-select");
+  if (select && view.customer && [...select.options].some(opt => opt.value === view.customer)) select.value = view.customer;
+
+  saveActiveOrderColumnState();
+  renderActiveOrders();
+  renderActiveOrderColumnDrawer();
+}
+
+function deleteActiveOrderView(index) {
+  const views = getActiveOrderSavedViews();
+  if (!views[index]) return;
+  views.splice(index, 1);
+  setActiveOrderSavedViews(views);
+  renderActiveOrderColumnDrawer();
+}
+
+function renderActiveOrdersHeader() {
+  const thead = document.getElementById("active-orders-head");
+  if (!thead) return;
+
+  const visibleColumns = getVisibleAoColumns();
+  thead.innerHTML = `
+    <tr>
+      ${visibleColumns.map(col => `
+        <th class="ao-draggable-th" draggable="true" data-field="${safeHtml(col.field)}"
+          ondragstart="handleAoHeaderDragStart(event, '${safeHtml(col.field)}')"
+          ondragover="handleAoHeaderDragOver(event)"
+          ondragleave="handleAoHeaderDragLeave(event)"
+          ondrop="handleAoHeaderDrop(event, '${safeHtml(col.field)}')"
+          ondragend="handleAoHeaderDragEnd(event)">
+          <span class="ao-th-content"><span class="ao-th-grip">⋮⋮</span>${safeHtml(col.label)}</span>
+        </th>
+      `).join("")}
+    </tr>
+  `;
+}
+
+function formatAoCell(row, col) {
+  const value = row[col.field];
+  if (col.type === "pill") return `<span class="ao-pill">${safeHtml(value)}</span>`;
+  if (col.type === "money") return safeHtml(formatMoney(value, 2));
+  if (col.type === "number") return safeHtml(formatNumber(value, 2));
+  return safeHtml(value);
+}
+
+
 // ===== ORDER EDITOR MODAL =====
 let orderEditorRows = [];
 
@@ -1250,18 +1793,22 @@ async function saveOrderEditorData() {
 function renderActiveOrders() {
   const customer = document.getElementById("customer-select").value;
   const tbody = document.getElementById("active-orders-body");
+  const visibleColumns = getVisibleAoColumns();
+  const colspan = Math.max(1, visibleColumns.length);
+
+  renderActiveOrdersHeader();
 
   tbody.innerHTML = "";
 
   if (!customer) {
-    tbody.innerHTML = `<tr><td colspan="${ACTIVE_ORDER_COLUMN_COUNT}" class="ao-empty">Select a customer to view active orders.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${colspan}" class="ao-empty">Select a customer to view active orders.</td></tr>`;
     return;
   }
 
   const rows = getGroupedRows(customer);
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="${ACTIVE_ORDER_COLUMN_COUNT}" class="ao-empty">No active orders found for this customer.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${colspan}" class="ao-empty">No active orders found for this customer.</td></tr>`;
     return;
   }
 
@@ -1275,41 +1822,9 @@ function renderActiveOrders() {
     }
 
     const isLight = poColorIndex % 2 === 0;
-
     const tr = document.createElement("tr");
     tr.className = isLight ? "ao-light-row" : "ao-dark-row";
-
-    tr.innerHTML = `
-      <td>${safeHtml(row.location)}</td>
-      <td><span class="ao-pill">${safeHtml(row.so)}</span></td>
-      <td>${safeHtml(row.po)}</td>
-      <td>${safeHtml(row.size)}</td>
-      <td>${safeHtml(row.tally)}</td>
-
-      <td>${formatMoney(row.grossCost, 2)}</td>
-      <td>${formatMoney(row.grossRunningCost, 2)}</td>
-      <td>${formatMoney(row.grossTransload, 2)}</td>
-      <td>${formatMoney(row.grossStorage, 2)}</td>
-      <td>${formatMoney(row.grossInterest, 2)}</td>
-      <td>${formatMoney(row.grossFreight, 2)}</td>
-      <td>${formatMoney(row.grossSalesPrice, 2)}</td>
-      <td>${formatMoney(row.grossMargin, 2)}</td>
-      <td>${formatMoney(row.grossRevenue, 2)}</td>
-
-      <td>${formatNumber(row.mbf, 2)}</td>
-      <td>${safeHtml(row.sold)}</td>
-      <td>${safeHtml(row.shipWeek)}</td>
-
-      <td>${formatMoney(row.costPerMbf, 2)}</td>
-      <td>${formatMoney(row.runningCostPerMbf, 2)}</td>
-      <td>${formatMoney(row.transloadCostPerMbf, 2)}</td>
-      <td>${formatMoney(row.storageCostPerMbf, 2)}</td>
-      <td>${formatMoney(row.interestCostPerMbf, 2)}</td>
-      <td>${formatMoney(row.freightPerMbf, 2)}</td>
-      <td>${formatMoney(row.marginPerMbf, 2)}</td>
-      <td>${formatMoney(row.salesPricePerMbf, 2)}</td>
-    `;
-
+    tr.innerHTML = visibleColumns.map(col => `<td>${formatAoCell(row, col)}</td>`).join("");
     tbody.appendChild(tr);
   });
 }
