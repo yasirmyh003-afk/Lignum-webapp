@@ -1,109 +1,503 @@
-function getSidebar(activeKey = "") {return `Lignum OperationsInventory & Release System
+function injectSidebarPolishStyles() {
+  if (document.getElementById("lignum-sidebar-polish-styles")) return;
 
-  <div class="sidebar-nav">
-    <a href="dashboard.html" class="sidebar-link ${activeKey === "dashboard" ? "active" : ""}">
-      <span class="sidebar-left"><span></span><span>Dashboard</span></span>
+  const style = document.createElement("style");
+  style.id = "lignum-sidebar-polish-styles";
+  style.textContent = `
+    :root {
+      --sidebar-compact-width: 82px;
+      --sidebar-expanded-width: 294px;
+      --sidebar-bg: #f5f7fa;
+      --sidebar-panel: #ffffff;
+      --sidebar-accent: #156082;
+      --sidebar-accent-dark: #0f4a63;
+      --sidebar-line: #e2e8f0;
+      --sidebar-text: #334155;
+      --sidebar-muted: #64748b;
+      --sidebar-soft: #eef2f5;
+    }
+
+    .app-shell {
+      transition: all .25s ease;
+    }
+
+    .app-sidebar {
+      width: var(--sidebar-compact-width) !important;
+      min-width: var(--sidebar-compact-width) !important;
+      max-width: var(--sidebar-expanded-width);
+      background: var(--sidebar-bg) !important;
+      border-right: 1px solid var(--sidebar-line) !important;
+      color: var(--sidebar-text) !important;
+      overflow-x: hidden !important;
+      transition: width .24s ease, min-width .24s ease, box-shadow .24s ease !important;
+      box-shadow: 4px 0 18px rgba(15,23,42,.04);
+      z-index: 30;
+    }
+
+    .app-sidebar:hover,
+    .app-sidebar.sidebar-pinned,
+    .app-sidebar.mobile-open {
+      width: var(--sidebar-expanded-width) !important;
+      min-width: var(--sidebar-expanded-width) !important;
+      box-shadow: 8px 0 26px rgba(15,23,42,.08);
+    }
+
+    .sidebar-logo {
+      min-height: 102px;
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 16px !important;
+      border-bottom: 1px solid var(--sidebar-line) !important;
+      color: var(--sidebar-text) !important;
+      overflow: hidden;
+      background: #f8fafc !important;
+    }
+
+    .sidebar-brand-icon {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      font-size: 21px;
+      font-weight: 900;
+      background: var(--sidebar-accent);
+      box-shadow: none;
+    }
+
+    .sidebar-brand-text {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+    }
+
+    .app-sidebar:hover .sidebar-brand-text,
+    .app-sidebar.sidebar-pinned .sidebar-brand-text,
+    .app-sidebar.mobile-open .sidebar-brand-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .sidebar-logo h1 {
+      color: var(--sidebar-accent) !important;
+      font-size: 21px !important;
+      line-height: 1.1 !important;
+      margin: 0 0 6px !important;
+      letter-spacing: .01em !important;
+      white-space: nowrap;
+    }
+
+    .sidebar-logo p {
+      color: #475569 !important;
+      font-size: 11px !important;
+      letter-spacing: .16em !important;
+      text-transform: uppercase !important;
+      margin: 0 !important;
+      white-space: nowrap;
+    }
+
+    .sidebar-pin-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--sidebar-line);
+      background: #ffffff;
+      color: var(--sidebar-muted);
+      border-radius: 999px;
+      margin-left: auto;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateX(8px);
+      transition: .18s ease;
+      flex: 0 0 30px;
+      box-shadow: none;
+    }
+
+    .app-sidebar:hover .sidebar-pin-btn,
+    .app-sidebar.sidebar-pinned .sidebar-pin-btn,
+    .app-sidebar.mobile-open .sidebar-pin-btn {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .app-sidebar.sidebar-pinned .sidebar-pin-btn {
+      background: var(--sidebar-accent);
+      color: #ffffff;
+      border-color: var(--sidebar-accent);
+    }
+
+    .sidebar-nav {
+      padding: 16px 10px !important;
+      gap: 6px !important;
+    }
+
+    .sidebar-link,
+    .sidebar-group-button,
+    .sidebar-sublink {
+      min-height: 46px;
+      color: var(--sidebar-muted) !important;
+      border: 1px solid transparent !important;
+      border-radius: 14px !important;
+      background: transparent !important;
+      transition: background .18s ease, color .18s ease, border .18s ease, transform .18s ease !important;
+      overflow: hidden;
+      box-shadow: none !important;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-group-button:hover,
+    .sidebar-sublink:hover {
+      background: #ffffff !important;
+      color: var(--sidebar-accent) !important;
+      border-color: var(--sidebar-line) !important;
+      transform: translateX(1px);
+    }
+
+    .sidebar-link.active,
+    .sidebar-sublink.active {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border-color: var(--sidebar-line) !important;
+      box-shadow: inset 4px 0 0 var(--sidebar-accent) !important;
+    }
+
+    .sidebar-left {
+      display: flex !important;
+      align-items: center !important;
+      gap: 13px !important;
+      min-width: 0;
+    }
+
+    .sidebar-icon {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 900;
+      background: #eef2f5;
+      color: #475569;
+      border: 1px solid #dbe4ee;
+      box-shadow: none;
+    }
+
+    .sidebar-link:hover .sidebar-icon,
+    .sidebar-group-button:hover .sidebar-icon,
+    .sidebar-sublink:hover .sidebar-icon {
+      background: #f8fafc;
+      color: var(--sidebar-accent);
+      border-color: #cbd5e1;
+    }
+
+    .sidebar-link.active .sidebar-icon,
+    .sidebar-sublink.active .sidebar-icon {
+      background: var(--sidebar-accent);
+      color: #ffffff;
+      border-color: var(--sidebar-accent);
+      box-shadow: none;
+    }
+
+    .sidebar-text,
+    .sidebar-chevron {
+      opacity: 0;
+      transform: translateX(-8px);
+      white-space: nowrap;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .app-sidebar:hover .sidebar-text,
+    .app-sidebar:hover .sidebar-chevron,
+    .app-sidebar.sidebar-pinned .sidebar-text,
+    .app-sidebar.sidebar-pinned .sidebar-chevron,
+    .app-sidebar.mobile-open .sidebar-text,
+    .app-sidebar.mobile-open .sidebar-chevron {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .sidebar-group-button {
+      width: 100%;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 4px 10px !important;
+      cursor: pointer;
+    }
+
+    .sidebar-link,
+    .sidebar-sublink {
+      display: flex !important;
+      align-items: center !important;
+      padding: 4px 10px !important;
+      text-decoration: none !important;
+    }
+
+    .sidebar-submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .25s ease;
+      padding-left: 0 !important;
+    }
+
+    .sidebar-submenu.open,
+    .app-sidebar:hover .sidebar-submenu.open,
+    .app-sidebar.sidebar-pinned .sidebar-submenu.open {
+      max-height: 420px;
+    }
+
+    .sidebar-sublink {
+      margin: 5px 0 5px 0 !important;
+      min-height: 40px;
+    }
+
+    .sidebar-sublink .sidebar-icon {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 11px;
+      font-size: 14px;
+      margin-left: 3px;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid var(--sidebar-line) !important;
+      padding: 12px 10px 16px !important;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    .user-card {
+      background: #ffffff !important;
+      border: 1px solid var(--sidebar-line) !important;
+      border-radius: 16px !important;
+      padding: 10px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      color: var(--sidebar-text);
+      min-height: 58px;
+      box-shadow: none !important;
+    }
+
+    .user-avatar {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      border-radius: 13px !important;
+      background: var(--sidebar-accent) !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+    }
+
+    .user-card > div:last-child {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+    }
+
+    .app-sidebar:hover .user-card > div:last-child,
+    .app-sidebar.sidebar-pinned .user-card > div:last-child,
+    .app-sidebar.mobile-open .user-card > div:last-child {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .user-name { color: #0f172a !important; }
+    .user-role { color: #64748b !important; }
+
+    @media(max-width: 900px) {
+      .app-sidebar {
+        width: var(--sidebar-expanded-width) !important;
+        min-width: var(--sidebar-expanded-width) !important;
+      }
+      .sidebar-brand-text,
+      .sidebar-text,
+      .sidebar-chevron,
+      .user-card > div:last-child,
+      .sidebar-pin-btn {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .sidebar-pin-btn { display: none !important; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function sidebarLink({ href, key, activeKey, icon, label }) {
+  return `
+    <a href="${href}" class="sidebar-link ${activeKey === key ? "active" : ""}" title="${label}">
+      <span class="sidebar-left">
+        <span class="sidebar-icon">${icon}</span>
+        <span class="sidebar-text">${label}</span>
+      </span>
     </a>
+  `;
+}
 
-    <a href="inventory.html" class="sidebar-link ${activeKey === "inventory" ? "active" : ""}">
-      <span class="sidebar-left"><span></span><span>Inventory</span></span>
+function sidebarSubLink({ href, key, activeKey, icon, label }) {
+  return `
+    <a href="${href}" class="sidebar-sublink ${activeKey === key ? "active" : ""}" title="${label}">
+      <span class="sidebar-left">
+        <span class="sidebar-icon">${icon}</span>
+        <span class="sidebar-text">${label}</span>
+      </span>
     </a>
+  `;
+}
 
-    <a href="new-po.html" class="sidebar-link ${activeKey === "new-po" ? "active" : ""}">
-      <span class="sidebar-left"><span></span><span>New Purchase Order</span></span>
-    </a>
-	
-	<a href="reload.html" class="sidebar-link ${activeKey === "reload" ? "active" : ""}">
-	  <span class="sidebar-left"><span></span><span>Reload</span></span>
-	</a>
-	
-	<a href="truck-release.html" class="sidebar-link ${activeKey === "truck-release" ? "active" : ""}">
-	  <span class="sidebar-left"><span></span><span>Truck Release</span></span>
-	</a>
+function getSidebar(activeKey = "") {
+  return `
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-brand-icon">L</div>
+        <div class="sidebar-brand-text">
+          <h1>Lignum Operations</h1>
+          <p>Inventory & Release System</p>
+        </div>
+        <button class="sidebar-pin-btn" type="button" onclick="toggleSidebarPin()" title="Pin sidebar">›</button>
+      </div>
 
-    <a href="matts.html" class="sidebar-link ${activeKey === "matts" ? "active" : ""}">
-      <span class="sidebar-left"><span></span><span>Matt’s Inventory</span></span>
-    </a>
-	
-	<a href="quality.html" class="sidebar-link ${activeKey === "quality" ? "active" : ""}">
-	  <span class="sidebar-left"><span></span><span>Quality Inventory</span></span>
-	</a>
-	
-	<a href="quotation.html" class="sidebar-link ${activeKey === "quotation" ? "active" : ""}">
-	  <span class="sidebar-left"><span></span><span>Quotation</span></span>
-	</a>
-	
-	<a href="active-orders.html" class="sidebar-link ${activeKey === "active-orders" ? "active" : ""}">
-	  <span class="sidebar-left"><span></span><span>Active Orders</span></span>
-	</a>
+      <div class="sidebar-nav">
+        ${sidebarLink({ href: "dashboard.html", key: "dashboard", activeKey, icon: "⌂", label: "Dashboard" })}
+        ${sidebarLink({ href: "inventory.html", key: "inventory", activeKey, icon: "▦", label: "Inventory" })}
+        ${sidebarLink({ href: "new-po.html", key: "new-po", activeKey, icon: "+", label: "New Purchase Order" })}
+        ${sidebarLink({ href: "reload.html", key: "reload", activeKey, icon: "⟳", label: "Reload" })}
+        ${sidebarLink({ href: "truck-release.html", key: "truck-release", activeKey, icon: "🚚", label: "Truck Release" })}
+        ${sidebarLink({ href: "matts.html", key: "matts", activeKey, icon: "M", label: "Matt’s Inventory" })}
+        ${sidebarLink({ href: "quality.html", key: "quality", activeKey, icon: "Q", label: "Quality Inventory" })}
+        ${sidebarLink({ href: "quotation.html", key: "quotation", activeKey, icon: "⌑", label: "Quotation" })}
+        ${sidebarLink({ href: "active-orders.html", key: "active-orders", activeKey, icon: "✓", label: "Active Orders" })}
 
-    <button class="sidebar-group-button" onclick="toggleSidebarGroup('logs-submenu')" type="button">
-      <span class="sidebar-left"><span></span><span>Logs</span></span>
-      <span>▾</span>
-    </button>
-    <div class="sidebar-submenu" id="logs-submenu">
-	  <a href="truck-release-logs.html" class="sidebar-sublink ${activeKey === "truck-release-logs" ? "active" : ""}">Truck Release Logs</a>
-      <a href="inv-logs.html" class="sidebar-sublink ${activeKey === "inv-logs" ? "active" : ""}">INV Logs</a>
-      <a href="new-purchases-logs.html" class="sidebar-sublink ${activeKey === "new-purchases-logs" ? "active" : ""}">New Purchases Logs</a>
-	  <a href="quotation-logs.html" class="sidebar-sublink ${activeKey === "quotation-logs" ? "active" : ""}">Quotation Logs</a>
-	  <a href="reload-logs.html" class="sidebar-sublink ${activeKey === "reload-logs" ? "active" : ""}">Reload Logs</a>
-    </div>
+        <button class="sidebar-group-button" onclick="toggleSidebarGroup('logs-submenu')" type="button" title="Logs">
+          <span class="sidebar-left">
+            <span class="sidebar-icon">▤</span>
+            <span class="sidebar-text">Logs</span>
+          </span>
+          <span class="sidebar-chevron">▾</span>
+        </button>
+        <div class="sidebar-submenu" id="logs-submenu">
+          ${sidebarSubLink({ href: "truck-release-logs.html", key: "truck-release-logs", activeKey, icon: "🚚", label: "Truck Release Logs" })}
+          ${sidebarSubLink({ href: "inv-logs.html", key: "inv-logs", activeKey, icon: "▦", label: "INV Logs" })}
+          ${sidebarSubLink({ href: "new-purchases-logs.html", key: "new-purchases-logs", activeKey, icon: "+", label: "New Purchases Logs" })}
+          ${sidebarSubLink({ href: "quotation-logs.html", key: "quotation-logs", activeKey, icon: "⌑", label: "Quotation Logs" })}
+          ${sidebarSubLink({ href: "reload-logs.html", key: "reload-logs", activeKey, icon: "⟳", label: "Reload Logs" })}
+        </div>
 
-    <button class="sidebar-group-button" onclick="toggleSidebarGroup('config-submenu')" type="button">
-      <span class="sidebar-left"><span></span><span>Configuration</span></span>
-      <span>▾</span>
-    </button>
-	
-	<div class="sidebar-submenu" id="config-submenu">
-	  <a href="dropdown-config.html" class="sidebar-sublink ${activeKey === "dropdown-config" ? "active" : ""}">Dropdown Master</a>
-	  <a href="carrier.html" class="sidebar-sublink ${activeKey === "carrier" ? "active" : ""}">Carriers</a>
-	  <a href="origin.html" class="sidebar-sublink ${activeKey === "origin" ? "active" : ""}">Origin</a>
-	  <a href="customer.html" class="sidebar-sublink ${activeKey === "customer" ? "active" : ""}">Customers</a>
-	</div>
-	
-	<a href="users.html" class="sidebar-link ${activeKey === "users" ? "active" : ""}">
-      <span class="sidebar-left"><span></span><span>Users</span></span>
-    </a>
+        <button class="sidebar-group-button" onclick="toggleSidebarGroup('config-submenu')" type="button" title="Configuration">
+          <span class="sidebar-left">
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-text">Configuration</span>
+          </span>
+          <span class="sidebar-chevron">▾</span>
+        </button>
+        <div class="sidebar-submenu" id="config-submenu">
+          ${sidebarSubLink({ href: "dropdown-config.html", key: "dropdown-config", activeKey, icon: "⌄", label: "Dropdown Master" })}
+          ${sidebarSubLink({ href: "carrier.html", key: "carrier", activeKey, icon: "C", label: "Carriers" })}
+          ${sidebarSubLink({ href: "origin.html", key: "origin", activeKey, icon: "⌖", label: "Origin" })}
+          ${sidebarSubLink({ href: "customer.html", key: "customer", activeKey, icon: "👥", label: "Customers" })}
+        </div>
 
-	
-  </div>
+        ${sidebarLink({ href: "users.html", key: "users", activeKey, icon: "👤", label: "Users" })}
+      </div>
 
-  <div class="sidebar-footer">
-	
-	<div class="user-card">
-	  <div class="user-avatar" id="sidebar-user-avatar">U</div>
-	  <div>
-		<div class="user-name" id="sidebar-user-name">Loading...</div>
-		<div class="user-role" id="sidebar-user-role">User</div>
-	 </div>
-	</div>
-	
-	<a href="#" onclick="logoutUser()" class="sidebar-link">
-	  <span class="sidebar-left"><span>↪</span><span>Logout</span></span>
-	</a>
-	
-  </div>
-</aside>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
+          <div>
+            <div class="user-name" id="sidebar-user-name">Loading...</div>
+            <div class="user-role" id="sidebar-user-role">User</div>
+          </div>
+        </div>
 
-`;}
+        <a href="#" onclick="logoutUser()" class="sidebar-link" title="Logout">
+          <span class="sidebar-left">
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-text">Logout</span>
+          </span>
+        </a>
+      </div>
+    </aside>
+  `;
+}
 
-function loadSidebar(activeKey) {const mount = document.getElementById("sidebar-mount");if (!mount) {console.error("sidebar-mount not found");return;}mount.innerHTML = getSidebar(activeKey);loadSidebarUser();if (["new-purchases-logs", "quotation-logs", "truck-release-logs", "reload-logs","inv-logs"].includes(activeKey)) {const logs = document.getElementById("logs-submenu");if (logs) logs.classList.add("open");}
+function loadSidebar(activeKey) {
+  injectSidebarPolishStyles();
+  const mount = document.getElementById("sidebar-mount");
+  if (!mount) {
+    console.error("sidebar-mount not found");
+    return;
+  }
 
-if (["dropdown-config", "carrier", "origin", "customer"].includes(activeKey)) {const config = document.getElementById("config-submenu");if (config) config.classList.add("open");}}
+  mount.innerHTML = getSidebar(activeKey);
 
-function toggleSidebarGroup(id) {const el = document.getElementById(id);if (!el) return;el.classList.toggle("open");}
+  const sidebar = document.getElementById("app-sidebar");
+  if (sidebar && localStorage.getItem("lignum_sidebar_pinned") === "1") {
+    sidebar.classList.add("sidebar-pinned");
+  }
 
-function openDrawer(drawerId, overlayId) {const drawer = document.getElementById(drawerId);const overlay = document.getElementById(overlayId);if (drawer) drawer.classList.add("open");if (overlay) overlay.classList.add("open");}
+  loadSidebarUser();
 
-function closeDrawer(drawerId, overlayId) {const drawer = document.getElementById(drawerId);const overlay = document.getElementById(overlayId);if (drawer) drawer.classList.remove("open");if (overlay) overlay.classList.remove("open");}
+  if (["new-purchases-logs", "quotation-logs", "truck-release-logs", "reload-logs", "inv-logs"].includes(activeKey)) {
+    const logs = document.getElementById("logs-submenu");
+    if (logs) logs.classList.add("open");
+  }
 
-function showAppModal({ type = "success", title = "Done", message = "" }) {const existing = document.getElementById("app-modal-overlay");if (existing) existing.remove();
+  if (["dropdown-config", "carrier", "origin", "customer"].includes(activeKey)) {
+    const config = document.getElementById("config-submenu");
+    if (config) config.classList.add("open");
+  }
+}
 
-const overlay = document.createElement("div");overlay.id = "app-modal-overlay";overlay.className = "app-modal-overlay open";
+function toggleSidebarPin() {
+  const sidebar = document.getElementById("app-sidebar") || document.querySelector(".app-sidebar");
+  if (!sidebar) return;
 
-const icon = type === "error" ? "✕" : "✓";const iconClass = type === "error" ? "error" : "success";
+  sidebar.classList.toggle("sidebar-pinned");
+  localStorage.setItem("lignum_sidebar_pinned", sidebar.classList.contains("sidebar-pinned") ? "1" : "0");
+}
 
-overlay.innerHTML =     <div class="app-modal">
+function toggleSidebarGroup(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle("open");
+}
+
+function openDrawer(drawerId, overlayId) {
+  const drawer = document.getElementById(drawerId);
+  const overlay = document.getElementById(overlayId);
+  if (drawer) drawer.classList.add("open");
+  if (overlay) overlay.classList.add("open");
+}
+
+function closeDrawer(drawerId, overlayId) {
+  const drawer = document.getElementById(drawerId);
+  const overlay = document.getElementById(overlayId);
+  if (drawer) drawer.classList.remove("open");
+  if (overlay) overlay.classList.remove("open");
+}
+
+function showAppModal({ type = "success", title = "Done", message = "" }) {
+  const existing = document.getElementById("app-modal-overlay");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "app-modal-overlay";
+  overlay.className = "app-modal-overlay open";
+
+  const icon = type === "error" ? "✕" : "✓";
+  const iconClass = type === "error" ? "error" : "success";
+
+  overlay.innerHTML = `
+    <div class="app-modal">
       <div class="app-modal-header">
         <div class="app-modal-icon ${iconClass}">${icon}</div>
         <div class="app-modal-title">${title}</div>
@@ -115,100 +509,188 @@ overlay.innerHTML =     <div class="app-modal">
         <button class="btn btn-primary" onclick="closeAppModal()">OK</button>
       </div>
     </div>
- ;
+  `;
 
-overlay.addEventListener("click", function (e) {if (e.target === overlay) closeAppModal();});
+  overlay.addEventListener("click", function (e) {
+    if (e.target === overlay) closeAppModal();
+  });
 
-document.body.appendChild(overlay);}
-
-function closeAppModal() {const overlay = document.getElementById("app-modal-overlay");if (overlay) overlay.remove();}
-
-async function requireLogin() {const { data } = await supabaseClient.auth.getSession();
-
-if (!data.session || !data.session.user) {window.location.href = "login.html";return null;}
-
-const email = data.session.user.email;
-
-const { data: appUser, error } = await supabaseClient.from("app_users").select("*").eq("email", email).eq("status", "Active").single();
-
-if (error || !appUser) {await supabaseClient.auth.signOut();localStorage.clear();window.location.href = "login.html";return null;}
-
-window.currentAppUser = appUser;return data.session.user;}
-
-async function logoutUser() {await supabaseClient.auth.signOut();
-
-localStorage.removeItem("lignum_access_token");localStorage.removeItem("lignum_refresh_token");localStorage.removeItem("lignum_user");
-
-window.location.href = "login.html";}
-
-async function getCurrentAppUser() {if (window.currentAppUser) return window.currentAppUser;
-
-const { data } = await supabaseClient.auth.getSession();const email = data?.session?.user?.email;
-
-if (!email) return null;
-
-const { data: appUser } = await supabaseClient.from("app_users").select("*").eq("email", email).single();
-
-window.currentAppUser = appUser;return appUser;}
-
-async function loadSidebarUser() {const appUser = await getCurrentAppUser();
-
-if (!appUser) return;
-
-const nameEl = document.getElementById("sidebar-user-name");const roleEl = document.getElementById("sidebar-user-role");const avatarEl = document.getElementById("sidebar-user-avatar");
-
-if (nameEl) nameEl.textContent = appUser.full_name || appUser.email || "User";if (roleEl) roleEl.textContent = appUser.role || "User";
-
-if (avatarEl) {const name = appUser.full_name || appUser.email || "User";avatarEl.textContent = name.split(" ").map(x => x[0]).join("").substring(0, 2).toUpperCase();}}
-
-async function getAuditUser() {const appUser = await getCurrentAppUser();
-
-return {name: appUser?.full_name || appUser?.email || "Unknown User",email: appUser?.email || ""};}
-
-
-
-
-
-
-
-
-
-function setupMobileMenu() {if (document.getElementById("mobile-menu-btn")) return;
-
-const button = document.createElement("button");button.id = "mobile-menu-btn";button.className = "mobile-menu-btn";button.innerHTML = "☰";button.type = "button";button.setAttribute("aria-label", "Open menu");
-
-const topBar = document.createElement("div");topBar.id = "mobile-top-bar";topBar.className = "mobile-top-bar";
-
-const overlay = document.createElement("div");overlay.id = "mobile-sidebar-overlay";overlay.className = "mobile-sidebar-overlay";
-
-document.body.appendChild(topBar);document.body.appendChild(button);document.body.appendChild(overlay);
-
-function updateMobileMenuOnScroll() {if (window.scrollY > 10) {button.classList.add("scrolled");topBar.classList.add("scrolled");} else {button.classList.remove("scrolled");topBar.classList.remove("scrolled");}}
-
-function openMenu() {document.querySelector(".app-sidebar")?.classList.add("mobile-open");overlay.classList.add("open");button.classList.add("menu-open");button.innerHTML = "×";button.setAttribute("aria-label", "Close menu");}
-
-function closeMenu() {document.querySelector(".app-sidebar")?.classList.remove("mobile-open");overlay.classList.remove("open");button.classList.remove("menu-open");button.innerHTML = "☰";button.setAttribute("aria-label", "Open menu");}
-
-button.addEventListener("click", function () {const sidebar = document.querySelector(".app-sidebar");if (!sidebar) return;
-
-if (sidebar.classList.contains("mobile-open")) {
-  closeMenu();
-} else {
-  openMenu();
+  document.body.appendChild(overlay);
 }
 
-});
+function closeAppModal() {
+  const overlay = document.getElementById("app-modal-overlay");
+  if (overlay) overlay.remove();
+}
 
-overlay.addEventListener("click", closeMenu);
+async function requireLogin() {
+  const { data } = await supabaseClient.auth.getSession();
 
-document.addEventListener("click", function (event) {if (event.target.closest(".sidebar-link") || event.target.closest(".sidebar-sublink")) {closeMenu();}});
+  if (!data.session || !data.session.user) {
+    window.location.href = "login.html";
+    return null;
+  }
 
-updateMobileMenuOnScroll();window.addEventListener("scroll", updateMobileMenuOnScroll);}
+  const email = data.session.user.email;
+
+  const { data: appUser, error } = await supabaseClient
+    .from("app_users")
+    .select("*")
+    .eq("email", email)
+    .eq("status", "Active")
+    .single();
+
+  if (error || !appUser) {
+    await supabaseClient.auth.signOut();
+    localStorage.clear();
+    window.location.href = "login.html";
+    return null;
+  }
+
+  window.currentAppUser = appUser;
+  return data.session.user;
+}
+
+async function logoutUser() {
+  await supabaseClient.auth.signOut();
+
+  localStorage.removeItem("lignum_access_token");
+  localStorage.removeItem("lignum_refresh_token");
+  localStorage.removeItem("lignum_user");
+
+  window.location.href = "login.html";
+}
+
+async function getCurrentAppUser() {
+  if (window.currentAppUser) return window.currentAppUser;
+
+  const { data } = await supabaseClient.auth.getSession();
+  const email = data?.session?.user?.email;
+
+  if (!email) return null;
+
+  const { data: appUser } = await supabaseClient
+    .from("app_users")
+    .select("*")
+    .eq("email", email)
+    .single();
+
+  window.currentAppUser = appUser;
+  return appUser;
+}
+
+async function loadSidebarUser() {
+  const appUser = await getCurrentAppUser();
+
+  if (!appUser) return;
+
+  const nameEl = document.getElementById("sidebar-user-name");
+  const roleEl = document.getElementById("sidebar-user-role");
+  const avatarEl = document.getElementById("sidebar-user-avatar");
+
+  if (nameEl) nameEl.textContent = appUser.full_name || appUser.email || "User";
+  if (roleEl) roleEl.textContent = appUser.role || "User";
+
+  if (avatarEl) {
+    const name = appUser.full_name || appUser.email || "User";
+    avatarEl.textContent = name
+      .split(" ")
+      .map(x => x[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
+  }
+}
+
+async function getAuditUser() {
+  const appUser = await getCurrentAppUser();
+
+  return {
+    name: appUser?.full_name || appUser?.email || "Unknown User",
+    email: appUser?.email || ""
+  };
+}
+
+function setupMobileMenu() {
+  if (document.getElementById("mobile-menu-btn")) return;
+
+  const button = document.createElement("button");
+  button.id = "mobile-menu-btn";
+  button.className = "mobile-menu-btn";
+  button.innerHTML = "☰";
+  button.type = "button";
+  button.setAttribute("aria-label", "Open menu");
+
+  const topBar = document.createElement("div");
+  topBar.id = "mobile-top-bar";
+  topBar.className = "mobile-top-bar";
+
+  const overlay = document.createElement("div");
+  overlay.id = "mobile-sidebar-overlay";
+  overlay.className = "mobile-sidebar-overlay";
+
+  document.body.appendChild(topBar);
+  document.body.appendChild(button);
+  document.body.appendChild(overlay);
+
+  function updateMobileMenuOnScroll() {
+    if (window.scrollY > 10) {
+      button.classList.add("scrolled");
+      topBar.classList.add("scrolled");
+    } else {
+      button.classList.remove("scrolled");
+      topBar.classList.remove("scrolled");
+    }
+  }
+
+  function openMenu() {
+    document.querySelector(".app-sidebar")?.classList.add("mobile-open");
+    overlay.classList.add("open");
+    button.classList.add("menu-open");
+    button.innerHTML = "×";
+    button.setAttribute("aria-label", "Close menu");
+  }
+
+  function closeMenu() {
+    document.querySelector(".app-sidebar")?.classList.remove("mobile-open");
+    overlay.classList.remove("open");
+    button.classList.remove("menu-open");
+    button.innerHTML = "☰";
+    button.setAttribute("aria-label", "Open menu");
+  }
+
+  button.addEventListener("click", function () {
+    const sidebar = document.querySelector(".app-sidebar");
+    if (!sidebar) return;
+
+    if (sidebar.classList.contains("mobile-open")) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  overlay.addEventListener("click", closeMenu);
+
+  document.addEventListener("click", function (event) {
+    if (event.target.closest(".sidebar-link") || event.target.closest(".sidebar-sublink")) {
+      closeMenu();
+    }
+  });
+
+  updateMobileMenuOnScroll();
+  window.addEventListener("scroll", updateMobileMenuOnScroll);
+}
 
 document.addEventListener("DOMContentLoaded", setupMobileMenu);
 
+function updateMobileMenuButtonOnScroll() {
+  const button = document.getElementById("mobile-menu-btn");
+  if (!button) return;
 
-
-
-
-function updateMobileMenuButtonOnScroll() {if (window.scrollY > 10) {button.classList.add("scrolled");} else {button.classList.remove("scrolled");}}
+  if (window.scrollY > 10) {
+    button.classList.add("scrolled");
+  } else {
+    button.classList.remove("scrolled");
+  }
+}
