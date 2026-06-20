@@ -393,6 +393,58 @@
 }
 </style>	
 </style>
+
+<style id="target-weeks-edit-fix">
+  .target-weeks-cell {
+    min-width: 190px !important;
+    width: 190px !important;
+    vertical-align: middle !important;
+  }
+
+  .target-weeks-editor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .target-weeks-editor span {
+    white-space: nowrap;
+    font-weight: 900;
+    color: #156082;
+  }
+
+  .target-weeks-input {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 38px !important;
+    margin: 0 !important;
+    padding: 6px 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .target-weeks-input:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(21, 96, 130, 0.14) !important;
+  }
+
+  .matts-scroll-wrap .matts-table .target-weeks-cell,
+  .quality-scroll-wrap .quality-table .target-weeks-cell {
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+  }
+</style>
+
 </head>
 
 <body>
@@ -901,9 +953,18 @@ function renderTopSummary(size, rows) {
         </tr>
 
         <tr>
-          <td class="label-cell">
-            Target Weeks
-            <input style="margin-top:6px;" value="${defaultTargetWeeks}" onchange="setSetting('${targetWeeksKey}', this.value); renderQualityPage();" />
+          <td class="label-cell target-weeks-cell">
+            <div class="target-weeks-editor">
+              <span>Target Weeks</span>
+              <input
+                class="target-weeks-input"
+                type="number"
+                step="0.1"
+                min="0"
+                value="${defaultTargetWeeks}"
+                onchange="setSetting('${targetWeeksKey}', this.value); renderQualityPage();"
+              />
+            </div>
           </td>
           ${weeksOnHandCells}
         </tr>
