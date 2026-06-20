@@ -84,7 +84,7 @@ function injectSidebarPolishStyles() {
 
     .sidebar-logo h1 {
       color: var(--sidebar-accent) !important;
-      font-size: 21px !important;
+      font-size: 20px !important;
       line-height: 1.1 !important;
       margin: 0 0 6px !important;
       letter-spacing: .01em !important;
@@ -93,7 +93,7 @@ function injectSidebarPolishStyles() {
 
     .sidebar-logo p {
       color: #475569 !important;
-      font-size: 11px !important;
+      font-size: 10px !important;
       letter-spacing: .16em !important;
       text-transform: uppercase !important;
       margin: 0 !important;
