@@ -364,6 +364,58 @@
 }
 </style>  
 </style>
+
+<style id="target-weeks-edit-fix">
+  .target-weeks-cell {
+    min-width: 190px !important;
+    width: 190px !important;
+    vertical-align: middle !important;
+  }
+
+  .target-weeks-editor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .target-weeks-editor span {
+    white-space: nowrap;
+    font-weight: 900;
+    color: #156082;
+  }
+
+  .target-weeks-input {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+    height: 38px !important;
+    margin: 0 !important;
+    padding: 6px 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .target-weeks-input:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(21, 96, 130, 0.14) !important;
+  }
+
+  .matts-scroll-wrap .matts-table .target-weeks-cell,
+  .quality-scroll-wrap .quality-table .target-weeks-cell {
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+  }
+</style>
+
 </head>
 
 <body>
@@ -482,6 +534,27 @@ function dateOnly(value) {
   if (!value) return "";
   return String(value).split("T")[0];
 }
+
+
+function getSetting(key, defaultValue = "") {
+  return localStorage.getItem(key) ?? defaultValue;
+}
+
+function setSetting(key, value) {
+  localStorage.setItem(key, value);
+}
+
+function makeSettingKeyPart(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function getMattsTargetWeeksKey(size, store = "All Stores") {
+  return `matts_target_weeks_${makeSettingKeyPart(size)}_${makeSettingKeyPart(store)}`;
+}
+
 
 
 async function loadMattsPage() {
@@ -929,7 +1002,8 @@ function renderMattsTopSummary(size) {
     return `<td>${formatMattsDate(addDays(mattsSelectedDate, (available / weekly) * 7))}</td>`;
   }).join("");
 
-  const targetWeeks = 4;
+  const targetWeeksKey = getMattsTargetWeeksKey(size, "All Stores");
+  const targetWeeks = Number(getSetting(targetWeeksKey, "4")) || 0;
 
   const needCells = mattsLengths.map(len => {
     const available = Number(getMattsAvailable(size, len) || 0);
@@ -945,7 +1019,22 @@ function renderMattsTopSummary(size) {
         <tr><td class="label-cell">Length</td>${lengthCells}</tr>
         <tr class="soft-yellow"><td class="label-cell">Weekly Usage</td>${weeklyCells}</tr>
         <tr class="soft-green"><td class="label-cell">Available</td>${availableCells}</tr>
-        <tr><td class="label-cell">Target Weeks<br><input value="4" readonly style="width:100%;text-align:center;margin-top:6px;"></td>${weeksCells}</tr>
+        <tr>
+          <td class="label-cell target-weeks-cell">
+            <div class="target-weeks-editor">
+              <span>Target Weeks</span>
+              <input
+                class="target-weeks-input"
+                type="number"
+                step="0.1"
+                min="0"
+                value="${targetWeeks}"
+                onchange="setSetting('${targetWeeksKey}', this.value); renderMattsPage();"
+              />
+            </div>
+          </td>
+          ${weeksCells}
+        </tr>
         <tr><td class="label-cell">Weeks Out Date</td>${dateCells}</tr>
         <tr class="soft-blue"><td class="label-cell">Need To Target</td>${needCells}</tr>
         <tr><td class="label-cell">On Order</td>${onOrderCells}</tr>
@@ -1197,7 +1286,8 @@ function getWeeklyUsageMattsByStore(size, len, store) {
 
 function renderMattsInventoryBlock(size, store, poPrefix) {
   const title = `${size} Matt Inventory - ${store}`;
-  const targetWeeks = 4;
+  const targetWeeksKey = getMattsTargetWeeksKey(size, store);
+  const targetWeeks = Number(getSetting(targetWeeksKey, "4")) || 0;
 
   const mbfCells = mattsLengths.map(len => `<td>${calcMattsMbfPerPack(size, len)}</td>`).join("");
   const lengthCells = mattsLengths.map(len => `<td>${len}</td>`).join("");
@@ -1246,7 +1336,22 @@ function renderMattsInventoryBlock(size, store, poPrefix) {
         <tr><td class="label-cell">Length</td>${lengthCells}</tr>
         <tr class="soft-yellow"><td class="label-cell">Weekly Usage</td>${weeklyCells}</tr>
         <tr class="soft-green"><td class="label-cell">Available</td>${availableCells}</tr>
-        <tr><td class="label-cell">Target Weeks<br><input value="4" readonly style="width:100%;text-align:center;margin-top:6px;"></td>${weeksCells}</tr>
+        <tr>
+          <td class="label-cell target-weeks-cell">
+            <div class="target-weeks-editor">
+              <span>Target Weeks</span>
+              <input
+                class="target-weeks-input"
+                type="number"
+                step="0.1"
+                min="0"
+                value="${targetWeeks}"
+                onchange="setSetting('${targetWeeksKey}', this.value); renderMattsPage();"
+              />
+            </div>
+          </td>
+          ${weeksCells}
+        </tr>
         <tr><td class="label-cell">Weeks Out Date</td>${dateCells}</tr>
         <tr class="soft-blue"><td class="label-cell">Need To Target</td>${needCells}</tr>
         <tr><td class="label-cell">On Order</td>${onOrderCells}</tr>
