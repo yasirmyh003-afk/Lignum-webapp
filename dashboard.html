@@ -9,64 +9,228 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
   <style>
-    .dashboard-section {
-      margin-top: 32px;
+    body {
+      background:
+        radial-gradient(circle at 15% 10%, rgba(34,199,232,.10), transparent 28%),
+        radial-gradient(circle at 90% 15%, rgba(250,204,21,.13), transparent 30%),
+        #f5f7fb;
+    }
+
+    .dashboard-hero-card {
+      display: grid;
+      grid-template-columns: 1.45fr .85fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 26px;
+    }
+
+    .dashboard-welcome {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 34px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 88% 15%, rgba(255,255,255,.22), transparent 26%),
+        linear-gradient(135deg, #156082 0%, #0f4a63 48%, #0f172a 100%);
+      box-shadow: 0 24px 60px rgba(21,96,130,.22);
+      min-height: 210px;
+    }
+
+    .dashboard-welcome::before {
+      content: "";
+      position: absolute;
+      right: -90px;
+      bottom: -90px;
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      border: 34px solid rgba(34,199,232,.18);
+    }
+
+    .dashboard-welcome h1 {
+      position: relative;
+      margin: 0 0 12px;
+      font-size: 42px;
+      line-height: 1.05;
+      letter-spacing: -.04em;
+      color: #fff;
+    }
+
+    .dashboard-welcome p {
+      position: relative;
+      max-width: 660px;
+      margin: 0;
+      color: rgba(255,255,255,.82);
+      font-size: 16px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .dashboard-quick-card {
+      border-radius: 28px;
+      padding: 26px;
+      background: #ffffff;
+      border: 1px solid #dbe4ee;
+      box-shadow: 0 18px 48px rgba(15,23,42,.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dashboard-quick-card::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      right: -40px;
+      top: -40px;
+      background: rgba(250,204,21,.18);
+    }
+
+    .quick-title {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 950;
+      color: #0f172a;
+    }
+
+    .quick-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #facc15, #f59e0b);
+      color: #713f12;
+      font-size: 22px;
+    }
+
+    .quick-metric {
+      position: relative;
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .quick-chip {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .quick-chip span {
+      display: block;
+      color: #64748b;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .quick-chip strong {
+      color: #156082;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 150px;
+      border-radius: 24px !important;
+      border: 1px solid rgba(219,228,238,.9) !important;
+      box-shadow: 0 18px 44px rgba(15,23,42,.07) !important;
+      background: #ffffff !important;
+      padding: 22px !important;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      right: -38px;
+      bottom: -38px;
+      background: var(--stat-glow, rgba(21,96,130,.11));
+    }
+
+    .stat-card.primary {
+      background: linear-gradient(135deg, #156082, #0f4a63) !important;
+      color: #fff !important;
+    }
+
+    .stat-card.primary .stat-label,
+    .stat-card.primary .stat-note,
+    .stat-card.primary .stat-value {
+      color: #fff !important;
+    }
+
+    .stat-card:nth-child(1) { --stat-glow: rgba(34,199,232,.18); }
+    .stat-card:nth-child(2) { --stat-glow: rgba(250,204,21,.24); }
+    .stat-card:nth-child(3) { --stat-glow: rgba(34,197,94,.18); }
+    .stat-card:nth-child(4) { --stat-glow: rgba(168,85,247,.15); }
+
+    .stat-label {
+      position: relative;
+      font-size: 11px !important;
+      font-weight: 950 !important;
+      letter-spacing: .12em !important;
+      text-transform: uppercase !important;
+      color: #64748b !important;
+      margin-bottom: 12px !important;
+    }
+
+    .stat-value {
+      position: relative;
+      font-size: 36px !important;
+      letter-spacing: -.04em !important;
+      color: #0f172a !important;
+      font-weight: 950 !important;
+      line-height: 1 !important;
+    }
+
+    .stat-note {
+      position: relative;
+      margin-top: 12px !important;
+      color: #64748b !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
     }
 
     .chart-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      margin-top: 32px;
+      gap: 24px;
+      margin-top: 24px;
     }
-
-    .bar-item {
-      margin-bottom: 16px;
-    }
-
-    .bar-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      font-size: 13px;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 7px;
-    }
-
-    .bar-head span:first-child {
-      min-width: 0;
-      word-break: break-word;
-    }
-
-    .bar-head .bar-value {
-      font-weight: 400;
-      flex: 0 0 auto;
-    }
-
-    .bar-track {
-      height: 12px;
-      background: #e2e8f0;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: #156082;
-      border-radius: 20px;
-    }
-
-    /* ===== Dashboard Table / Chart Cards UI ===== */
 
     .dashboard-table-card {
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      border-radius: 22px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+      border-radius: 28px;
       border: 1px solid #dbe4ee;
-      box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
       overflow: hidden;
       margin-bottom: 0;
-      padding: 28px;
+      padding: 26px;
     }
 
     .dashboard-table-card .card-pad {
@@ -75,7 +239,7 @@
     }
 
     .dashboard-table-card .card-title-row {
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     .dashboard-table-card .card-title-row .icon {
@@ -84,18 +248,67 @@
 
     .dashboard-table-card .card-title {
       width: 100%;
-      display: block;
-      background: linear-gradient(135deg, #156082 0%, #0f4a63 100%);
-      color: #ffffff;
-      border-radius: 14px;
-      padding: 14px 18px;
-      box-shadow: 0 10px 22px rgba(21, 96, 130, 0.16);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 18px;
-      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      color: #0f172a;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+      letter-spacing: -.02em;
+      text-transform: none;
+      font-size: 19px;
+      font-weight: 950;
       text-align: left;
       box-sizing: border-box;
+    }
+
+    .card-title::after {
+      content: "↗";
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #eef8ff;
+      color: #156082;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .bar-item {
+      margin-bottom: 18px;
+    }
+
+    .bar-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .bar-head .bar-value {
+      font-weight: 900;
+      color: #156082;
+      flex: 0 0 auto;
+    }
+
+    .bar-track {
+      height: 13px;
+      background: #edf2f7;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, var(--bar-a, #156082), var(--bar-b, #22c7e8));
+      box-shadow: 0 8px 18px rgba(21,96,130,.18);
     }
 
     .dashboard-table-card .table-wrap,
@@ -107,7 +320,7 @@
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
       box-sizing: border-box;
-      border-radius: 14px;
+      border-radius: 18px;
     }
 
     .dashboard-table-card .table {
@@ -118,7 +331,7 @@
       background: #ffffff;
       font-size: 13px;
       overflow: hidden;
-      border-radius: 14px;
+      border-radius: 18px;
       table-layout: auto !important;
       border: 1px solid #dbe4ee;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
@@ -141,59 +354,28 @@
       white-space: nowrap !important;
     }
 
- 
+    .dashboard-table-card .table td {
+      padding: 12px 14px !important;
+      border: 0 !important;
+      border-bottom: 1px solid #e5e7eb !important;
+      color: #0f172a !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      background: #ffffff;
+      vertical-align: middle;
+      white-space: nowrap;
+      text-align: center !important;
+    }
 
-.dashboard-table-card .table td {
-  padding: 11px 14px !important;
-  border: 0 !important;
-  border-bottom: 1px solid #e5e7eb !important;
-  color: #0f172a !important;
-  font-size: 13px !important;
-  font-weight: 300 !important;
-  background: #ffffff;
-  vertical-align: middle;
-  white-space: nowrap;
-  text-align: center !important;
-}
+    .dashboard-table-card .table th:first-child,
+    .dashboard-table-card .table td:first-child {
+      text-align: left !important;
+    }
 
-
-    /* Keep first column header + values left aligned */
-.dashboard-table-card .table th:first-child,
-.dashboard-table-card .table td:first-child {
-  text-align: left !important;
-}
-
-/* Keep last numeric column right aligned */
-.dashboard-table-card .table th:last-child,
-.dashboard-table-card .table td:last-child {
-  text-align: right !important;
-}
-
-/* If this is the Top Grades table, keep Grade column left */
-.dashboard-table-card .grade-table th:nth-child(1),
-.dashboard-table-card .grade-table td:nth-child(1) {
-  text-align: left !important;
-  font-weight: 300 !important;
-}
-
-/* Keep Rows centered */
-.dashboard-table-card .grade-table th:nth-child(2),
-.dashboard-table-card .grade-table td:nth-child(2) {
-  text-align: center !important;
-  font-weight: 300 !important;
-}
-
-/* Keep Total MBF right */
-.dashboard-table-card .grade-table th:nth-child(3),
-.dashboard-table-card .grade-table td:nth-child(3) {
-  text-align: right !important;
-  font-weight: 300 !important;
-}
-
-/* Headers remain bold */
-.dashboard-table-card .table th {
-  font-weight: 900 !important;
-}
+    .dashboard-table-card .table th:last-child,
+    .dashboard-table-card .table td:last-child {
+      text-align: right !important;
+    }
 
     .dashboard-table-card .table tbody tr:nth-child(even) td {
       background: #f8fafc !important;
@@ -203,99 +385,31 @@
       background: #f1f5f9 !important;
     }
 
-    .dashboard-table-card .table tbody tr:last-child td {
-      border-bottom: 0 !important;
+    .dashboard-section {
+      margin-top: 24px;
     }
 
-    .dashboard-table-card .table th:last-child,
-    .dashboard-table-card .table td:last-child {
-      min-width: 140px;
-      text-align: right !important;
-    }
-
-    .mini-table td {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .grade-table {
-      width: 100% !important;
-      min-width: 620px !important;
-      table-layout: auto !important;
-    }
-
-    .grade-table th,
-    .grade-table td {
-      white-space: nowrap !important;
-    }
-
-    .grade-table th:nth-child(1),
-    .grade-table td:nth-child(1) {
-      min-width: 220px;
-    }
-
-    .grade-table th:nth-child(2),
-    .grade-table td:nth-child(2) {
-      min-width: 120px;
-    }
-
-    .grade-table th:nth-child(3),
-    .grade-table td:nth-child(3) {
-      min-width: 150px;
-      text-align: right !important;
-    }
-
-    @media(max-width: 1000px) {
+    @media(max-width: 1100px) {
+      .dashboard-hero-card,
       .chart-row {
         grid-template-columns: 1fr;
-        gap: 32px;
       }
-
-      .dashboard-section {
-        margin-top: 32px;
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
-    @media (max-width: 760px) {
+    @media(max-width: 760px) {
+      .dashboard-welcome h1 {
+        font-size: 32px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
       .dashboard-table-card {
-        padding: 20px !important;
-        margin-bottom: 28px;
-      }
-
-      .chart-row {
-        gap: 30px;
-        margin-top: 28px;
-      }
-
-      .dashboard-table-card .card-title-row {
-        margin-bottom: 24px;
-      }
-
-      .dashboard-table-card .card-title {
-        font-size: 16px;
-        padding: 13px 16px;
-      }
-
-      .dashboard-table-card .table {
-        width: max-content !important;
-        min-width: 620px !important;
-      }
-
-      .dashboard-table-card .grade-table-wrap::after {
-        content: "Scroll sideways to view full table →";
-        display: block;
-        margin-top: 10px;
-        font-size: 12px;
-        font-weight: 800;
-        color: #64748b;
+        padding: 20px;
       }
     }
-
-
-    .mini-table td {
-  font-size: 13px;
-  font-weight: 700;
-}
   </style>
 </head>
 
@@ -305,9 +419,25 @@
 
   <main class="page-shell">
     <div class="page-frame">
-      <div class="page-hero">
-        <h1>Dashboard</h1>
-        <p>Lignum operations overview: inventory, stock movement, purchase logs, releases, and quotations.</p>
+      <div class="dashboard-hero-card">
+        <section class="dashboard-welcome">
+          <h1>Good Morning, <span id="dashboard-user-first-name">Team</span></h1>
+          <p>Lignum operations overview: inventory health, stock movement, purchase activity, releases, and quotations in one clean command center.</p>
+        </section>
+
+        <section class="dashboard-quick-card">
+          <div class="quick-title">
+            <div class="quick-icon">▦</div>
+            <div>
+              <div>Today’s Operations</div>
+              <small style="color:#64748b;font-weight:800;">Live snapshot from Supabase</small>
+            </div>
+          </div>
+          <div class="quick-metric">
+            <div class="quick-chip"><span>Locations</span><strong id="location-count">--</strong></div>
+            <div class="quick-chip"><span>Species</span><strong id="species-count">--</strong></div>
+          </div>
+        </section>
       </div>
 
       <div class="stats-grid">
@@ -338,18 +468,6 @@
 
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-label">Locations</div>
-          <div class="stat-value" id="location-count">--</div>
-          <div class="stat-note">Unique stock locations</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-label">Species</div>
-          <div class="stat-value" id="species-count">--</div>
-          <div class="stat-note">Unique lumber species</div>
-        </div>
-
-        <div class="stat-card">
           <div class="stat-label">Purchase Logs</div>
           <div class="stat-value" id="purchase-count">--</div>
           <div class="stat-note">Confirmed PO logs</div>
@@ -359,6 +477,18 @@
           <div class="stat-label">Truck Releases</div>
           <div class="stat-value" id="truck-count">--</div>
           <div class="stat-note">Generated release rows</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Open Stock %</div>
+          <div class="stat-value" id="open-stock-percent">--</div>
+          <div class="stat-note">Open rows vs total rows</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Avg MBF / Row</div>
+          <div class="stat-value" id="avg-mbf-row">--</div>
+          <div class="stat-note">Average board footage</div>
         </div>
       </div>
 
@@ -414,13 +544,25 @@
 document.addEventListener("DOMContentLoaded", async function () {
   await requireLogin();
   loadSidebar("dashboard");
+  setDashboardUserName();
   loadDashboardStats();
 });
+
+async function setDashboardUserName() {
+  const appUser = await getCurrentAppUser();
+  const firstName = String(appUser?.full_name || appUser?.email || "Team").split(" ")[0];
+  const el = document.getElementById("dashboard-user-first-name");
+  if (el) el.textContent = firstName || "Team";
+}
 
 function numberFormat(value) {
   return Number(value || 0).toLocaleString(undefined, {
     maximumFractionDigits: 2
   });
+}
+
+function percentFormat(value) {
+  return `${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
 }
 
 function groupRows(rows, field, sumField = null) {
@@ -460,10 +602,21 @@ function renderBarChart(elementId, rows, valueField) {
   }
 
   const max = Math.max(...rows.map(x => x[valueField] || 0));
+  const palette = [
+    ["#156082", "#22c7e8"],
+    ["#f59e0b", "#facc15"],
+    ["#16a34a", "#86efac"],
+    ["#7c3aed", "#c4b5fd"],
+    ["#ef4444", "#fca5a5"],
+    ["#0ea5e9", "#bae6fd"],
+    ["#14b8a6", "#99f6e4"],
+    ["#64748b", "#cbd5e1"]
+  ];
 
-  rows.slice(0, 8).forEach(item => {
+  rows.slice(0, 8).forEach((item, index) => {
     const value = item[valueField] || 0;
     const percent = max ? (value / max) * 100 : 0;
+    const colors = palette[index % palette.length];
 
     container.innerHTML += `
       <div class="bar-item">
@@ -472,7 +625,7 @@ function renderBarChart(elementId, rows, valueField) {
           <span class="bar-value">${numberFormat(value)}</span>
         </div>
         <div class="bar-track">
-          <div class="bar-fill" style="width:${percent}%"></div>
+          <div class="bar-fill" style="width:${percent}%; --bar-a:${colors[0]}; --bar-b:${colors[1]};"></div>
         </div>
       </div>
     `;
@@ -502,6 +655,8 @@ async function loadDashboardStats() {
   const totalMBF = rows.reduce((sum, row) => sum + Number(row.mbf || 0), 0);
   const soldRows = rows.filter(row => row.so_number && String(row.so_number).trim() !== "").length;
   const openRows = rows.length - soldRows;
+  const openPercent = rows.length ? (openRows / rows.length) * 100 : 0;
+  const avgMbf = rows.length ? totalMBF / rows.length : 0;
 
   const locations = new Set(rows.map(x => x.location).filter(Boolean));
   const species = new Set(rows.map(x => x.specie).filter(Boolean));
@@ -512,6 +667,8 @@ async function loadDashboardStats() {
   document.getElementById("sold-stock").textContent = numberFormat(soldRows);
   document.getElementById("location-count").textContent = numberFormat(locations.size);
   document.getElementById("species-count").textContent = numberFormat(species.size);
+  document.getElementById("open-stock-percent").textContent = percentFormat(openPercent);
+  document.getElementById("avg-mbf-row").textContent = numberFormat(avgMbf);
 
   await setCount("new_purchase_logs", "purchase-count");
   await setCount("truck_release_logs", "truck-count");
