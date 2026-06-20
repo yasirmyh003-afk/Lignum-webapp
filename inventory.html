@@ -312,51 +312,63 @@
 }
 
 
-/* ===== Column Views + Summary Row ===== */
-.inventory-summary-row th {
-  background: linear-gradient(180deg, #eef7ea 0%, #dcedd4 100%) !important;
-  color: #0f4a63 !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-  white-space: normal !important;
-  min-height: 76px;
-  padding: 10px 10px !important;
-  border-bottom: 2px solid #156082 !important;
-  border-right: 1px solid rgba(21, 96, 130, 0.12) !important;
+/* ===== Column Views + Detached Summary Strip ===== */
+.inventory-summary-strip {
+  display: grid;
+  align-items: stretch;
+  background: #ffffff;
+  border: 1px solid #dbe4ee;
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
 }
 
-.inventory-summary-row th.summary-empty {
-  background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%) !important;
-  color: transparent !important;
+.inventory-summary-cell {
+  min-height: 94px;
+  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #e5edf5;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.inventory-summary-cell:last-child {
+  border-right: 0;
+}
+
+.inventory-summary-cell.summary-empty {
+  background: #ffffff;
 }
 
 .summary-metric-card {
-  min-height: 58px;
   width: 100%;
+  min-height: 64px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
-  padding: 8px 10px;
-  border-radius: 13px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(21, 96, 130, 0.16);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+  gap: 5px;
+  padding: 10px 12px;
+  border-radius: 15px;
+  background: linear-gradient(180deg, #ffffff 0%, #f5faf7 100%);
+  border: 1px solid rgba(21, 96, 130, 0.14);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
 }
 
 .summary-metric-label {
   color: #64748b;
   font-size: 9px;
-  font-weight: 900;
+  font-weight: 950;
   line-height: 1;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .summary-metric-value {
   color: #0f4a63;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 950;
   line-height: 1.05;
   letter-spacing: -0.01em;
@@ -365,12 +377,19 @@
 .summary-metric-subvalue {
   color: #156082;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 950;
   line-height: 1.1;
+  letter-spacing: 0.04em;
 }
 
 .summary-metric-card.two-line .summary-metric-value {
   font-size: 15px;
+}
+
+.inventory-table-card .table {
+  border-radius: 0 0 14px 14px !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04) !important;
+  table-layout: fixed !important;
 }
 
 .inventory-table-card .table th.draggable-column {
@@ -504,7 +523,9 @@
           </div>
 
           <div class="table-wrap">
+            <div id="inventory-summary-strip" class="inventory-summary-strip"></div>
             <table class="table">
+              <colgroup id="inventory-table-colgroup"></colgroup>
               <thead>
 				<tr id="inventory-table-head"></tr>
               </thead>
@@ -1289,25 +1310,75 @@ function renderInventoryTable() {
 }
 
 
-function renderInventoryHeader() {
-  const head = document.getElementById("inventory-table-head");
-  if (!head) return;
+function getInventoryColumnWidth(field) {
+  const widths = {
+    sku: 150,
+    car_number: 120,
+    po_number: 120,
+    location: 160,
+    mill: 150,
+    specie: 120,
+    grade: 130,
+    ppu: 105,
+    size: 110,
+    length_value: 110,
+    mbf: 120,
+    sales_price: 150,
+    cust_po_number: 150,
+    ship_week: 150,
+    customer: 210,
+    number_group: 95,
+    so_number: 130,
+    cost: 120,
+    running_cost: 160,
+    transload: 145,
+    storage: 135,
+    interest: 135,
+    freight: 135,
+    futures: 125,
+    sold: 130,
+    invoiced: 140,
+    received: 140,
+    shipped: 140,
+    inv: 115,
+    available: 135,
+    length_type: 150,
+    subtotal: 130,
+    helper: 260,
+    note: 220
+  };
 
-  const thead = head.parentElement;
-  let summaryRow = document.getElementById("inventory-summary-row");
+  return widths[field] || 140;
+}
 
-  if (!summaryRow) {
-    summaryRow = document.createElement("tr");
-    summaryRow.id = "inventory-summary-row";
-    summaryRow.className = "inventory-summary-row";
-    thead.insertBefore(summaryRow, head);
-  }
+function syncInventoryTableWidths(visibleColumns) {
+  const table = document.querySelector(".inventory-table-card .table");
+  const colgroup = document.getElementById("inventory-table-colgroup");
+  const summaryStrip = document.getElementById("inventory-summary-strip");
 
-  const rows = getFilteredRows();
+  if (!table || !colgroup || !summaryStrip) return;
+
+  const selectWidth = 88;
+  const widths = [selectWidth, ...visibleColumns.map(column => getInventoryColumnWidth(column.field))];
+  const totalWidth = widths.reduce((total, width) => total + width, 0);
+
+  colgroup.innerHTML = widths
+    .map(width => `<col style="width:${width}px; min-width:${width}px;">`)
+    .join("");
+
+  table.style.width = `${totalWidth}px`;
+  table.style.minWidth = `${totalWidth}px`;
+
+  summaryStrip.style.width = `${totalWidth}px`;
+  summaryStrip.style.minWidth = `${totalWidth}px`;
+  summaryStrip.style.gridTemplateColumns = widths.map(width => `${width}px`).join(" ");
+}
+
+function renderInventorySummaryStrip(rows, visibleColumns) {
+  const summaryStrip = document.getElementById("inventory-summary-strip");
+  if (!summaryStrip) return;
+
   const summary = calculateInventorySummaryValues(rows);
-  const visibleColumns = getVisibleColumns();
-
-  summaryRow.innerHTML = `<th class="summary-empty"></th>`;
 
   const summaryLabels = {
     length_value: "Count",
@@ -1321,13 +1392,15 @@ function renderInventoryHeader() {
     interest: "Subtotal"
   };
 
+  summaryStrip.innerHTML = `<div class="inventory-summary-cell summary-empty"></div>`;
+
   visibleColumns.forEach(column => {
-    const th = document.createElement("th");
     const value = summary[column.field] || "";
+    const cell = document.createElement("div");
+    cell.className = value ? "inventory-summary-cell" : "inventory-summary-cell summary-empty";
 
     if (!value) {
-      th.className = "summary-empty";
-      summaryRow.appendChild(th);
+      summaryStrip.appendChild(cell);
       return;
     }
 
@@ -1336,7 +1409,7 @@ function renderInventoryHeader() {
     const subValue = parts.slice(1).join(" / ");
     const label = summaryLabels[column.field] || "Summary";
 
-    th.innerHTML = `
+    cell.innerHTML = `
       <div class="summary-metric-card ${subValue ? "two-line" : ""}">
         <div class="summary-metric-label">${escapeHtml(label)}</div>
         <div class="summary-metric-value">${escapeHtml(mainValue)}</div>
@@ -1344,8 +1417,19 @@ function renderInventoryHeader() {
       </div>
     `;
 
-    summaryRow.appendChild(th);
+    summaryStrip.appendChild(cell);
   });
+}
+
+function renderInventoryHeader() {
+  const head = document.getElementById("inventory-table-head");
+  if (!head) return;
+
+  const rows = getFilteredRows();
+  const visibleColumns = getVisibleColumns();
+
+  syncInventoryTableWidths(visibleColumns);
+  renderInventorySummaryStrip(rows, visibleColumns);
 
   head.innerHTML = `<th>Select</th>`;
 
@@ -1359,18 +1443,13 @@ function renderInventoryHeader() {
       <button class="th-filter-btn" onclick="openColumnFilter(event, '${column.field}')">▾</button>
     `;
 
-    th.addEventListener("dragstart", function () {
-      draggedColumnField = column.field;
-      th.classList.add("drag-over");
+    th.addEventListener("dragstart", function (event) {
+      event.dataTransfer.setData("text/plain", column.field);
+      event.dataTransfer.effectAllowed = "move";
     });
 
-    th.addEventListener("dragend", function () {
-      draggedColumnField = null;
-      document.querySelectorAll("th.drag-over").forEach(el => el.classList.remove("drag-over"));
-    });
-
-    th.addEventListener("dragover", function (e) {
-      e.preventDefault();
+    th.addEventListener("dragover", function (event) {
+      event.preventDefault();
       th.classList.add("drag-over");
     });
 
@@ -1378,10 +1457,11 @@ function renderInventoryHeader() {
       th.classList.remove("drag-over");
     });
 
-    th.addEventListener("drop", function (e) {
-      e.preventDefault();
+    th.addEventListener("drop", function (event) {
+      event.preventDefault();
       th.classList.remove("drag-over");
-      moveInventoryColumn(draggedColumnField, column.field);
+      const sourceField = event.dataTransfer.getData("text/plain");
+      moveInventoryColumn(sourceField, column.field);
     });
 
     head.appendChild(th);
