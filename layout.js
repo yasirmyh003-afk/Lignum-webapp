@@ -7,13 +7,13 @@ function injectSidebarPolishStyles() {
     :root {
       --sidebar-compact-width: 82px;
       --sidebar-expanded-width: 294px;
-      --sidebar-bg: #0f172a;
-      --sidebar-bg-2: #111827;
+      --sidebar-bg: #0f4a63;
+      --sidebar-bg-2: #156082;
       --sidebar-accent: #156082;
-      --sidebar-accent-2: #22c7e8;
-      --sidebar-line: rgba(255,255,255,.09);
-      --sidebar-text: #e5eef8;
-      --sidebar-muted: #94a3b8;
+      --sidebar-accent-2: #d7eef5;
+      --sidebar-line: rgba(255,255,255,.12);
+      --sidebar-text: #f8fafc;
+      --sidebar-muted: #c7d4dc;
     }
 
     .app-shell {
@@ -24,14 +24,12 @@ function injectSidebarPolishStyles() {
       width: var(--sidebar-compact-width) !important;
       min-width: var(--sidebar-compact-width) !important;
       max-width: var(--sidebar-expanded-width);
-      background:
-        radial-gradient(circle at 0% 0%, rgba(34,199,232,.25), transparent 36%),
-        linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
-      border-right: 1px solid rgba(255,255,255,.08) !important;
+      background: linear-gradient(180deg, #156082 0%, #0f4a63 100%) !important;
+      border-right: 1px solid rgba(255,255,255,.12) !important;
       color: var(--sidebar-text) !important;
       overflow-x: hidden !important;
       transition: width .24s ease, min-width .24s ease, box-shadow .24s ease !important;
-      box-shadow: 10px 0 28px rgba(15,23,42,.08);
+      box-shadow: 10px 0 28px rgba(15,23,42,.07);
       z-index: 30;
     }
 
@@ -40,7 +38,7 @@ function injectSidebarPolishStyles() {
     .app-sidebar.mobile-open {
       width: var(--sidebar-expanded-width) !important;
       min-width: var(--sidebar-expanded-width) !important;
-      box-shadow: 18px 0 45px rgba(15,23,42,.18);
+      box-shadow: 18px 0 38px rgba(15,23,42,.14);
     }
 
     .sidebar-logo {
@@ -64,8 +62,8 @@ function injectSidebarPolishStyles() {
       color: #fff;
       font-size: 21px;
       font-weight: 900;
-      background: linear-gradient(135deg, #156082, #22c7e8);
-      box-shadow: 0 14px 28px rgba(21,96,130,.28);
+      background: linear-gradient(135deg, #156082, #0f4a63);
+      box-shadow: 0 12px 24px rgba(15,74,99,.22);
     }
 
     .sidebar-brand-text {
@@ -104,7 +102,7 @@ function injectSidebarPolishStyles() {
       width: 30px;
       height: 30px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      background: rgba(255,255,255,.08);
       color: #e2e8f0;
       border-radius: 999px;
       margin-left: auto;
@@ -125,8 +123,8 @@ function injectSidebarPolishStyles() {
     }
 
     .app-sidebar.sidebar-pinned .sidebar-pin-btn {
-      background: #22c7e8;
-      color: #062a38;
+      background: #ffffff;
+      color: #156082;
     }
 
     .sidebar-nav {
@@ -149,17 +147,17 @@ function injectSidebarPolishStyles() {
     .sidebar-link:hover,
     .sidebar-group-button:hover,
     .sidebar-sublink:hover {
-      background: rgba(255,255,255,.07) !important;
+      background: rgba(255,255,255,.10) !important;
       color: #ffffff !important;
       transform: translateX(2px);
     }
 
     .sidebar-link.active,
     .sidebar-sublink.active {
-      background: linear-gradient(135deg, rgba(34,199,232,.19), rgba(21,96,130,.32)) !important;
+      background: rgba(255,255,255,.14) !important;
       color: #ffffff !important;
-      border-color: rgba(34,199,232,.28) !important;
-      box-shadow: inset 3px 0 0 #22c7e8, 0 12px 28px rgba(0,0,0,.12);
+      border-color: rgba(255,255,255,.22) !important;
+      box-shadow: inset 4px 0 0 #ffffff, 0 10px 22px rgba(0,0,0,.10);
     }
 
     .sidebar-left {
@@ -178,14 +176,14 @@ function injectSidebarPolishStyles() {
       place-items: center;
       font-size: 17px;
       font-weight: 900;
-      background: rgba(255,255,255,.065);
-      color: #dbeafe;
-      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.10);
+      color: #edf6f9;
+      border: 1px solid rgba(255,255,255,.13);
     }
 
     .sidebar-link.active .sidebar-icon,
     .sidebar-sublink.active .sidebar-icon {
-      background: linear-gradient(135deg, #156082, #22c7e8);
+      background: linear-gradient(135deg, #156082, #0f4a63);
       color: #fff;
       box-shadow: 0 10px 22px rgba(34,199,232,.22);
     }
@@ -277,7 +275,7 @@ function injectSidebarPolishStyles() {
       border-radius: 14px !important;
       background: linear-gradient(135deg, #156082, #22c7e8) !important;
       color: #fff !important;
-      box-shadow: 0 12px 24px rgba(21,96,130,.25);
+      box-shadow: 0 10px 20px rgba(15,74,99,.18);
     }
 
     .user-card > div:last-child {
