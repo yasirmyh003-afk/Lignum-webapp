@@ -1,116 +1,452 @@
+function injectSidebarPolishStyles() {
+  if (document.getElementById("lignum-sidebar-polish-styles")) return;
+
+  const style = document.createElement("style");
+  style.id = "lignum-sidebar-polish-styles";
+  style.textContent = `
+    :root {
+      --sidebar-compact-width: 82px;
+      --sidebar-expanded-width: 294px;
+      --sidebar-bg: #0f172a;
+      --sidebar-bg-2: #111827;
+      --sidebar-accent: #156082;
+      --sidebar-accent-2: #22c7e8;
+      --sidebar-line: rgba(255,255,255,.09);
+      --sidebar-text: #e5eef8;
+      --sidebar-muted: #94a3b8;
+    }
+
+    .app-shell {
+      transition: all .25s ease;
+    }
+
+    .app-sidebar {
+      width: var(--sidebar-compact-width) !important;
+      min-width: var(--sidebar-compact-width) !important;
+      max-width: var(--sidebar-expanded-width);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(34,199,232,.25), transparent 36%),
+        linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
+      border-right: 1px solid rgba(255,255,255,.08) !important;
+      color: var(--sidebar-text) !important;
+      overflow-x: hidden !important;
+      transition: width .24s ease, min-width .24s ease, box-shadow .24s ease !important;
+      box-shadow: 10px 0 28px rgba(15,23,42,.08);
+      z-index: 30;
+    }
+
+    .app-sidebar:hover,
+    .app-sidebar.sidebar-pinned,
+    .app-sidebar.mobile-open {
+      width: var(--sidebar-expanded-width) !important;
+      min-width: var(--sidebar-expanded-width) !important;
+      box-shadow: 18px 0 45px rgba(15,23,42,.18);
+    }
+
+    .sidebar-logo {
+      min-height: 102px;
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 16px !important;
+      border-bottom: 1px solid var(--sidebar-line) !important;
+      color: var(--sidebar-text) !important;
+      overflow: hidden;
+    }
+
+    .sidebar-brand-icon {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 21px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #156082, #22c7e8);
+      box-shadow: 0 14px 28px rgba(21,96,130,.28);
+    }
+
+    .sidebar-brand-text {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+    }
+
+    .app-sidebar:hover .sidebar-brand-text,
+    .app-sidebar.sidebar-pinned .sidebar-brand-text,
+    .app-sidebar.mobile-open .sidebar-brand-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .sidebar-logo h1 {
+      color: #ffffff !important;
+      font-size: 21px !important;
+      line-height: 1.1 !important;
+      margin: 0 0 6px !important;
+      letter-spacing: .01em !important;
+      white-space: nowrap;
+    }
+
+    .sidebar-logo p {
+      color: rgba(226,232,240,.75) !important;
+      font-size: 11px !important;
+      letter-spacing: .16em !important;
+      text-transform: uppercase !important;
+      margin: 0 !important;
+      white-space: nowrap;
+    }
+
+    .sidebar-pin-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: #e2e8f0;
+      border-radius: 999px;
+      margin-left: auto;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transform: translateX(8px);
+      transition: .18s ease;
+      flex: 0 0 30px;
+    }
+
+    .app-sidebar:hover .sidebar-pin-btn,
+    .app-sidebar.sidebar-pinned .sidebar-pin-btn,
+    .app-sidebar.mobile-open .sidebar-pin-btn {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .app-sidebar.sidebar-pinned .sidebar-pin-btn {
+      background: #22c7e8;
+      color: #062a38;
+    }
+
+    .sidebar-nav {
+      padding: 16px 10px !important;
+      gap: 6px !important;
+    }
+
+    .sidebar-link,
+    .sidebar-group-button,
+    .sidebar-sublink {
+      min-height: 46px;
+      color: var(--sidebar-muted) !important;
+      border: 1px solid transparent !important;
+      border-radius: 16px !important;
+      background: transparent !important;
+      transition: background .18s ease, color .18s ease, border .18s ease, transform .18s ease !important;
+      overflow: hidden;
+    }
+
+    .sidebar-link:hover,
+    .sidebar-group-button:hover,
+    .sidebar-sublink:hover {
+      background: rgba(255,255,255,.07) !important;
+      color: #ffffff !important;
+      transform: translateX(2px);
+    }
+
+    .sidebar-link.active,
+    .sidebar-sublink.active {
+      background: linear-gradient(135deg, rgba(34,199,232,.19), rgba(21,96,130,.32)) !important;
+      color: #ffffff !important;
+      border-color: rgba(34,199,232,.28) !important;
+      box-shadow: inset 3px 0 0 #22c7e8, 0 12px 28px rgba(0,0,0,.12);
+    }
+
+    .sidebar-left {
+      display: flex !important;
+      align-items: center !important;
+      gap: 13px !important;
+      min-width: 0;
+    }
+
+    .sidebar-icon {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      font-weight: 900;
+      background: rgba(255,255,255,.065);
+      color: #dbeafe;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .sidebar-link.active .sidebar-icon,
+    .sidebar-sublink.active .sidebar-icon {
+      background: linear-gradient(135deg, #156082, #22c7e8);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(34,199,232,.22);
+    }
+
+    .sidebar-text,
+    .sidebar-chevron {
+      opacity: 0;
+      transform: translateX(-8px);
+      white-space: nowrap;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .app-sidebar:hover .sidebar-text,
+    .app-sidebar:hover .sidebar-chevron,
+    .app-sidebar.sidebar-pinned .sidebar-text,
+    .app-sidebar.sidebar-pinned .sidebar-chevron,
+    .app-sidebar.mobile-open .sidebar-text,
+    .app-sidebar.mobile-open .sidebar-chevron {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .sidebar-group-button {
+      width: 100%;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 4px 10px !important;
+      cursor: pointer;
+    }
+
+    .sidebar-link,
+    .sidebar-sublink {
+      display: flex !important;
+      align-items: center !important;
+      padding: 4px 10px !important;
+      text-decoration: none !important;
+    }
+
+    .sidebar-submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .25s ease;
+      padding-left: 0 !important;
+    }
+
+    .sidebar-submenu.open,
+    .app-sidebar:hover .sidebar-submenu.open,
+    .app-sidebar.sidebar-pinned .sidebar-submenu.open {
+      max-height: 420px;
+    }
+
+    .sidebar-sublink {
+      margin: 5px 0 5px 0 !important;
+      min-height: 40px;
+    }
+
+    .sidebar-sublink .sidebar-icon {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-left: 3px;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid var(--sidebar-line) !important;
+      padding: 12px 10px 16px !important;
+      overflow: hidden;
+    }
+
+    .user-card {
+      background: rgba(255,255,255,.06) !important;
+      border: 1px solid rgba(255,255,255,.09) !important;
+      border-radius: 18px !important;
+      padding: 10px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      color: #fff;
+      min-height: 58px;
+    }
+
+    .user-avatar {
+      width: 40px !important;
+      height: 40px !important;
+      min-width: 40px !important;
+      border-radius: 14px !important;
+      background: linear-gradient(135deg, #156082, #22c7e8) !important;
+      color: #fff !important;
+      box-shadow: 0 12px 24px rgba(21,96,130,.25);
+    }
+
+    .user-card > div:last-child {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity .18s ease, transform .18s ease;
+      white-space: nowrap;
+    }
+
+    .app-sidebar:hover .user-card > div:last-child,
+    .app-sidebar.sidebar-pinned .user-card > div:last-child,
+    .app-sidebar.mobile-open .user-card > div:last-child {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .user-name { color: #fff !important; }
+    .user-role { color: rgba(226,232,240,.72) !important; }
+
+    @media(max-width: 900px) {
+      .app-sidebar {
+        width: var(--sidebar-expanded-width) !important;
+        min-width: var(--sidebar-expanded-width) !important;
+      }
+      .sidebar-brand-text,
+      .sidebar-text,
+      .sidebar-chevron,
+      .user-card > div:last-child,
+      .sidebar-pin-btn {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .sidebar-pin-btn { display: none !important; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function sidebarLink({ href, key, activeKey, icon, label }) {
+  return `
+    <a href="${href}" class="sidebar-link ${activeKey === key ? "active" : ""}" title="${label}">
+      <span class="sidebar-left">
+        <span class="sidebar-icon">${icon}</span>
+        <span class="sidebar-text">${label}</span>
+      </span>
+    </a>
+  `;
+}
+
+function sidebarSubLink({ href, key, activeKey, icon, label }) {
+  return `
+    <a href="${href}" class="sidebar-sublink ${activeKey === key ? "active" : ""}" title="${label}">
+      <span class="sidebar-left">
+        <span class="sidebar-icon">${icon}</span>
+        <span class="sidebar-text">${label}</span>
+      </span>
+    </a>
+  `;
+}
+
 function getSidebar(activeKey = "") {
   return `
-    <aside class="app-sidebar">
+    <aside class="app-sidebar" id="app-sidebar">
       <div class="sidebar-logo">
-        <h1>Lignum Operations</h1>
-        <p>Inventory & Release System</p>
+        <div class="sidebar-brand-icon">L</div>
+        <div class="sidebar-brand-text">
+          <h1>Lignum Operations</h1>
+          <p>Inventory & Release System</p>
+        </div>
+        <button class="sidebar-pin-btn" type="button" onclick="toggleSidebarPin()" title="Pin sidebar">›</button>
       </div>
 
       <div class="sidebar-nav">
-        <a href="dashboard.html" class="sidebar-link ${activeKey === "dashboard" ? "active" : ""}">
-          <span class="sidebar-left"><span></span><span>Dashboard</span></span>
-        </a>
+        ${sidebarLink({ href: "dashboard.html", key: "dashboard", activeKey, icon: "⌂", label: "Dashboard" })}
+        ${sidebarLink({ href: "inventory.html", key: "inventory", activeKey, icon: "▦", label: "Inventory" })}
+        ${sidebarLink({ href: "new-po.html", key: "new-po", activeKey, icon: "+", label: "New Purchase Order" })}
+        ${sidebarLink({ href: "reload.html", key: "reload", activeKey, icon: "⟳", label: "Reload" })}
+        ${sidebarLink({ href: "truck-release.html", key: "truck-release", activeKey, icon: "🚚", label: "Truck Release" })}
+        ${sidebarLink({ href: "matts.html", key: "matts", activeKey, icon: "M", label: "Matt’s Inventory" })}
+        ${sidebarLink({ href: "quality.html", key: "quality", activeKey, icon: "Q", label: "Quality Inventory" })}
+        ${sidebarLink({ href: "quotation.html", key: "quotation", activeKey, icon: "⌑", label: "Quotation" })}
+        ${sidebarLink({ href: "active-orders.html", key: "active-orders", activeKey, icon: "✓", label: "Active Orders" })}
 
-        <a href="inventory.html" class="sidebar-link ${activeKey === "inventory" ? "active" : ""}">
-          <span class="sidebar-left"><span></span><span>Inventory</span></span>
-        </a>
-
-        <a href="new-po.html" class="sidebar-link ${activeKey === "new-po" ? "active" : ""}">
-          <span class="sidebar-left"><span></span><span>New Purchase Order</span></span>
-        </a>
-		
-		<a href="reload.html" class="sidebar-link ${activeKey === "reload" ? "active" : ""}">
-		  <span class="sidebar-left"><span></span><span>Reload</span></span>
-		</a>
-		
-		<a href="truck-release.html" class="sidebar-link ${activeKey === "truck-release" ? "active" : ""}">
-		  <span class="sidebar-left"><span></span><span>Truck Release</span></span>
-		</a>
-
-        <a href="matts.html" class="sidebar-link ${activeKey === "matts" ? "active" : ""}">
-          <span class="sidebar-left"><span></span><span>Matt’s Inventory</span></span>
-        </a>
-		
-		<a href="quality.html" class="sidebar-link ${activeKey === "quality" ? "active" : ""}">
-		  <span class="sidebar-left"><span></span><span>Quality Inventory</span></span>
-		</a>
-		
-		<a href="quotation.html" class="sidebar-link ${activeKey === "quotation" ? "active" : ""}">
-		  <span class="sidebar-left"><span></span><span>Quotation</span></span>
-		</a>
-		
-		<a href="active-orders.html" class="sidebar-link ${activeKey === "active-orders" ? "active" : ""}">
-		  <span class="sidebar-left"><span></span><span>Active Orders</span></span>
-		</a>
-
-        <button class="sidebar-group-button" onclick="toggleSidebarGroup('logs-submenu')" type="button">
-          <span class="sidebar-left"><span></span><span>Logs</span></span>
-          <span>▾</span>
+        <button class="sidebar-group-button" onclick="toggleSidebarGroup('logs-submenu')" type="button" title="Logs">
+          <span class="sidebar-left">
+            <span class="sidebar-icon">▤</span>
+            <span class="sidebar-text">Logs</span>
+          </span>
+          <span class="sidebar-chevron">▾</span>
         </button>
         <div class="sidebar-submenu" id="logs-submenu">
-		  <a href="truck-release-logs.html" class="sidebar-sublink ${activeKey === "truck-release-logs" ? "active" : ""}">Truck Release Logs</a>
-          <a href="inv-logs.html" class="sidebar-sublink ${activeKey === "inv-logs" ? "active" : ""}">INV Logs</a>
-          <a href="new-purchases-logs.html" class="sidebar-sublink ${activeKey === "new-purchases-logs" ? "active" : ""}">New Purchases Logs</a>
-		  <a href="quotation-logs.html" class="sidebar-sublink ${activeKey === "quotation-logs" ? "active" : ""}">Quotation Logs</a>
-		  <a href="reload-logs.html" class="sidebar-sublink ${activeKey === "reload-logs" ? "active" : ""}">Reload Logs</a>
+          ${sidebarSubLink({ href: "truck-release-logs.html", key: "truck-release-logs", activeKey, icon: "🚚", label: "Truck Release Logs" })}
+          ${sidebarSubLink({ href: "inv-logs.html", key: "inv-logs", activeKey, icon: "▦", label: "INV Logs" })}
+          ${sidebarSubLink({ href: "new-purchases-logs.html", key: "new-purchases-logs", activeKey, icon: "+", label: "New Purchases Logs" })}
+          ${sidebarSubLink({ href: "quotation-logs.html", key: "quotation-logs", activeKey, icon: "⌑", label: "Quotation Logs" })}
+          ${sidebarSubLink({ href: "reload-logs.html", key: "reload-logs", activeKey, icon: "⟳", label: "Reload Logs" })}
         </div>
 
-        <button class="sidebar-group-button" onclick="toggleSidebarGroup('config-submenu')" type="button">
-          <span class="sidebar-left"><span></span><span>Configuration</span></span>
-          <span>▾</span>
+        <button class="sidebar-group-button" onclick="toggleSidebarGroup('config-submenu')" type="button" title="Configuration">
+          <span class="sidebar-left">
+            <span class="sidebar-icon">⚙</span>
+            <span class="sidebar-text">Configuration</span>
+          </span>
+          <span class="sidebar-chevron">▾</span>
         </button>
-		
-		<div class="sidebar-submenu" id="config-submenu">
-		  <a href="dropdown-config.html" class="sidebar-sublink ${activeKey === "dropdown-config" ? "active" : ""}">Dropdown Master</a>
-		  <a href="carrier.html" class="sidebar-sublink ${activeKey === "carrier" ? "active" : ""}">Carriers</a>
-		  <a href="origin.html" class="sidebar-sublink ${activeKey === "origin" ? "active" : ""}">Origin</a>
-		  <a href="customer.html" class="sidebar-sublink ${activeKey === "customer" ? "active" : ""}">Customers</a>
-		</div>
-		
-		<a href="users.html" class="sidebar-link ${activeKey === "users" ? "active" : ""}">
-          <span class="sidebar-left"><span></span><span>Users</span></span>
-        </a>
+        <div class="sidebar-submenu" id="config-submenu">
+          ${sidebarSubLink({ href: "dropdown-config.html", key: "dropdown-config", activeKey, icon: "⌄", label: "Dropdown Master" })}
+          ${sidebarSubLink({ href: "carrier.html", key: "carrier", activeKey, icon: "C", label: "Carriers" })}
+          ${sidebarSubLink({ href: "origin.html", key: "origin", activeKey, icon: "⌖", label: "Origin" })}
+          ${sidebarSubLink({ href: "customer.html", key: "customer", activeKey, icon: "👥", label: "Customers" })}
+        </div>
 
-		
+        ${sidebarLink({ href: "users.html", key: "users", activeKey, icon: "👤", label: "Users" })}
       </div>
 
       <div class="sidebar-footer">
-		
-		<div class="user-card">
-		  <div class="user-avatar" id="sidebar-user-avatar">U</div>
-		  <div>
-			<div class="user-name" id="sidebar-user-name">Loading...</div>
-			<div class="user-role" id="sidebar-user-role">User</div>
-		 </div>
-		</div>
-		
-		<a href="#" onclick="logoutUser()" class="sidebar-link">
-		  <span class="sidebar-left"><span>↪</span><span>Logout</span></span>
-		</a>
-		
+        <div class="user-card">
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
+          <div>
+            <div class="user-name" id="sidebar-user-name">Loading...</div>
+            <div class="user-role" id="sidebar-user-role">User</div>
+          </div>
+        </div>
+
+        <a href="#" onclick="logoutUser()" class="sidebar-link" title="Logout">
+          <span class="sidebar-left">
+            <span class="sidebar-icon">↪</span>
+            <span class="sidebar-text">Logout</span>
+          </span>
+        </a>
       </div>
     </aside>
   `;
 }
 
 function loadSidebar(activeKey) {
+  injectSidebarPolishStyles();
   const mount = document.getElementById("sidebar-mount");
   if (!mount) {
     console.error("sidebar-mount not found");
     return;
   }
+
   mount.innerHTML = getSidebar(activeKey);
+
+  const sidebar = document.getElementById("app-sidebar");
+  if (sidebar && localStorage.getItem("lignum_sidebar_pinned") === "1") {
+    sidebar.classList.add("sidebar-pinned");
+  }
+
   loadSidebarUser();
-  if (["new-purchases-logs", "quotation-logs", "truck-release-logs", "reload-logs","inv-logs"].includes(activeKey)) {
+
+  if (["new-purchases-logs", "quotation-logs", "truck-release-logs", "reload-logs", "inv-logs"].includes(activeKey)) {
     const logs = document.getElementById("logs-submenu");
     if (logs) logs.classList.add("open");
   }
-  
-  
+
   if (["dropdown-config", "carrier", "origin", "customer"].includes(activeKey)) {
     const config = document.getElementById("config-submenu");
     if (config) config.classList.add("open");
   }
+}
+
+function toggleSidebarPin() {
+  const sidebar = document.getElementById("app-sidebar") || document.querySelector(".app-sidebar");
+  if (!sidebar) return;
+
+  sidebar.classList.toggle("sidebar-pinned");
+  localStorage.setItem("lignum_sidebar_pinned", sidebar.classList.contains("sidebar-pinned") ? "1" : "0");
 }
 
 function toggleSidebarGroup(id) {
@@ -199,7 +535,6 @@ async function requireLogin() {
   return data.session.user;
 }
 
-
 async function logoutUser() {
   await supabaseClient.auth.signOut();
 
@@ -228,7 +563,6 @@ async function getCurrentAppUser() {
   return appUser;
 }
 
-
 async function loadSidebarUser() {
   const appUser = await getCurrentAppUser();
 
@@ -252,7 +586,6 @@ async function loadSidebarUser() {
   }
 }
 
-
 async function getAuditUser() {
   const appUser = await getCurrentAppUser();
 
@@ -261,14 +594,6 @@ async function getAuditUser() {
     email: appUser?.email || ""
   };
 }
-
-
-
-
-
-
-
-
 
 function setupMobileMenu() {
   if (document.getElementById("mobile-menu-btn")) return;
@@ -343,16 +668,13 @@ function setupMobileMenu() {
 
 document.addEventListener("DOMContentLoaded", setupMobileMenu);
 
-
-
-
-
-
 function updateMobileMenuButtonOnScroll() {
+  const button = document.getElementById("mobile-menu-btn");
+  if (!button) return;
+
   if (window.scrollY > 10) {
     button.classList.add("scrolled");
   } else {
     button.classList.remove("scrolled");
   }
 }
-
