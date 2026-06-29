@@ -511,6 +511,7 @@
 				oninput="renderInventoryTable()"
 				/>
 				<button class="btn btn-secondary" onclick="openDrawer('filterDrawer','filterOverlay')">Filter</button>
+				<button class="btn btn-secondary" onclick="clearAllInventoryFilters()">Clear Filters</button>
 				<button class="btn btn-secondary" onclick="openColumnViewDrawer()">Columns</button>
 			  </div>
 			  
@@ -699,6 +700,38 @@
 	let hiddenColumnFields = new Set();
 	let draggedColumnField = null;
 	const INVENTORY_COLUMN_VIEW_STORAGE_KEY = "inventory_column_view_v1";
+
+async function fetchAllSupabaseRows(table, { orderBy = "created_at", ascending = false, pageSize = 1000, filterBuilder = null } = {}) {
+  let allRows = [];
+  let from = 0;
+
+  while (true) {
+    let query = supabaseClient
+      .from(table)
+      .select("*");
+
+    if (typeof filterBuilder === "function") {
+      query = filterBuilder(query);
+    }
+
+    if (orderBy) {
+      query = query.order(orderBy, { ascending });
+    }
+
+    const to = from + pageSize - 1;
+    const { data, error } = await query.range(from, to);
+
+    if (error) throw error;
+
+    const rows = data || [];
+    allRows = allRows.concat(rows);
+
+    if (rows.length < pageSize) break;
+    from += pageSize;
+  }
+
+  return allRows;
+}
 
     const inventoryColumns = [
       { label: "SKU", field: "sku", type: "text" },
@@ -1194,13 +1227,7 @@ async function calculateAndSyncInventoryCostFields(options = {}) {
   try {
     await loadHelperLocationSettings();
 
-    const { data: latestRows, error } = await supabaseClient
-      .from("inventory")
-      .select("*");
-
-    if (error) throw error;
-
-    const rows = latestRows || [];
+    const rows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
     const poCounts = {};
 
     rows.forEach(row => {
@@ -1272,19 +1299,15 @@ async function calculateAndSyncInventoryCostFields(options = {}) {
 }
 
 async function reloadInventoryRowsNoSync() {
-  const { data, error } = await supabaseClient
-    .from("inventory")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
+  try {
+    allInventoryRows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
+    console.log(`Inventory rows loaded: ${allInventoryRows.length}`);
+    return true;
+  } catch (error) {
     console.error("Inventory load error:", error);
     setInventoryStatus("Could not load inventory rows.", "error");
     return false;
   }
-
-  allInventoryRows = data || [];
-  return true;
 }
 
 async function loadInventoryRows() {
@@ -1542,11 +1565,7 @@ function escapeHtml(text) {
     const selectedRows = await getSelectedInventoryRows();
     if (!selectedRows.length) return;
 
-    const { data: allRows, error: allRowsError } = await supabaseClient
-      .from("inventory")
-      .select("*");
-
-    if (allRowsError) throw allRowsError;
+    const allRows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
 
     let maxNumber = 0;
     const poToNumber = {};
@@ -1686,12 +1705,11 @@ function escapeHtml(text) {
           return;
         }
 
-        const { data, error } = await supabaseClient
-          .from("inventory")
-          .select("*")
-          .eq("so_number", so);
-
-        if (error) throw error;
+        const data = await fetchAllSupabaseRows("inventory", {
+          orderBy: "created_at",
+          ascending: false,
+          filterBuilder: query => query.eq("so_number", so)
+        });
         if (!data || data.length === 0) {
           setInventoryStatus("No inventory rows were found for that SO#.", "error");
           return;
@@ -1734,12 +1752,11 @@ function escapeHtml(text) {
           return;
         }
 
-        const { data, error } = await supabaseClient
-          .from("inventory")
-          .select("*")
-          .eq("po_number", po);
-
-        if (error) throw error;
+        const data = await fetchAllSupabaseRows("inventory", {
+          orderBy: "created_at",
+          ascending: false,
+          filterBuilder: query => query.eq("po_number", po)
+        });
         if (!data || data.length === 0) {
           setInventoryStatus("No inventory rows were found for that PO#.", "error");
           return;
@@ -2060,6 +2077,16 @@ function renderActiveFilterBar() {
     `;
     bar.appendChild(pill);
   });
+}
+
+function clearAllInventoryFilters() {
+  activeFilters = {};
+  const search = document.getElementById("inventory-global-search");
+  if (search) search.value = "";
+  selectedRowIds.clear();
+  renderInventoryTable();
+  renderActiveFilterBar();
+  setInventoryStatus("All filters cleared.", "success");
 }
 
 function removeFilter(field) {
