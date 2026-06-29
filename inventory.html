@@ -746,7 +746,13 @@
 	let hiddenColumnFields = new Set();
 	let draggedColumnField = null;
 	let currentInventoryPage = 1;
+	let inventoryLoadGeneration = 0;
+	let inventoryTotalSupabaseCount = 0;
+	let inventoryIsBackgroundLoading = false;
 	const INVENTORY_PAGE_SIZE = 250;
+	const INVENTORY_FAST_FIRST_BATCH_SIZE = 1000;
+	const INVENTORY_FAST_CHUNK_SIZE = 1000;
+	const INVENTORY_FAST_CONCURRENCY = 3;
 	const INVENTORY_COLUMN_VIEW_STORAGE_KEY = "inventory_column_view_v1";
 
 function sleepInventoryFetch(ms) {
@@ -1382,21 +1388,136 @@ async function calculateAndSyncInventoryCostFields(options = {}) {
   }
 }
 
-async function reloadInventoryRowsNoSync() {
+async function getInventoryExactCountFast() {
+  const { count, error } = await supabaseClient
+    .from("inventory")
+    .select("id", { count: "exact", head: true });
+
+  if (error) throw error;
+  return Number(count || 0);
+}
+
+async function fetchInventoryRangeFast(from, to) {
+  const { data, error } = await supabaseClient
+    .from("inventory")
+    .select("*")
+    .order("id", { ascending: true })
+    .range(from, to);
+
+  if (error) throw error;
+  return data || [];
+}
+
+function setInventoryLoadingStatus(message) {
+  const status = document.getElementById("inventory-status");
+  if (!status) return;
+  status.className = "inline-status show info";
+  status.textContent = message;
+}
+
+function finishInventoryLoadingStatus(message, type = "success") {
+  setInventoryStatus(message, type);
+}
+
+async function loadRemainingInventoryRowsFast(generation, totalCount, firstBatchSize) {
+  if (totalCount <= firstBatchSize) {
+    inventoryIsBackgroundLoading = false;
+    return;
+  }
+
+  inventoryIsBackgroundLoading = true;
+
+  const ranges = [];
+  for (let from = firstBatchSize; from < totalCount; from += INVENTORY_FAST_CHUNK_SIZE) {
+    ranges.push([from, Math.min(from + INVENTORY_FAST_CHUNK_SIZE - 1, totalCount - 1)]);
+  }
+
+  const rangeResults = new Array(ranges.length);
+  let nextIndex = 0;
+  let completedRows = firstBatchSize;
+
+  async function worker() {
+    while (true) {
+      const index = nextIndex++;
+      if (index >= ranges.length) return;
+
+      const [from, to] = ranges[index];
+      const rows = await fetchInventoryRangeFast(from, to);
+
+      if (generation !== inventoryLoadGeneration) return;
+
+      rangeResults[index] = rows;
+      completedRows += rows.length;
+
+      console.log(`Inventory background chunk loaded: ${from + 1}-${from + rows.length} of ${totalCount}`);
+      setInventoryLoadingStatus(`Inventory ready. Loading remaining rows in background: ${Math.min(completedRows, totalCount)} / ${totalCount}`);
+    }
+  }
+
   try {
-    allInventoryRows = await fetchAllSupabaseRows("inventory", { orderBy: "id", ascending: true, pageSize: 500 });
+    const workers = Array.from({ length: Math.min(INVENTORY_FAST_CONCURRENCY, ranges.length) }, worker);
+    await Promise.all(workers);
+
+    if (generation !== inventoryLoadGeneration) return;
+
+    const remainingRows = rangeResults.flat().filter(Boolean);
+    allInventoryRows = allInventoryRows.slice(0, firstBatchSize).concat(remainingRows);
     window.allInventoryRows = allInventoryRows;
+
     console.log(`Inventory rows loaded in web app memory: ${allInventoryRows.length}`);
 
-    if (allInventoryRows.length === 1000) {
-      console.warn("Only 1000 inventory rows loaded. This usually means an older inventory.html is still cached or the old file is still being served. Hard refresh or restart the local server after replacing the file.");
+    inventoryIsBackgroundLoading = false;
+    renderInventoryTable();
+    renderActiveFilterBar();
+    finishInventoryLoadingStatus(`Inventory fully loaded: ${allInventoryRows.length} rows.`, "success");
+  } catch (error) {
+    inventoryIsBackgroundLoading = false;
+    console.error("Inventory background load error:", error);
+    setInventoryStatus("Inventory opened, but remaining rows could not finish loading. Refresh once.", "error");
+  }
+}
+
+async function reloadInventoryRowsNoSync() {
+  const generation = ++inventoryLoadGeneration;
+
+  try {
+    setInventoryLoadingStatus("Opening Inventory quickly...");
+
+    inventoryTotalSupabaseCount = await getInventoryExactCountFast();
+    console.log(`Inventory exact count from Supabase: ${inventoryTotalSupabaseCount}`);
+
+    const firstTo = Math.min(INVENTORY_FAST_FIRST_BATCH_SIZE - 1, Math.max(inventoryTotalSupabaseCount - 1, 0));
+    const firstRows = inventoryTotalSupabaseCount ? await fetchInventoryRangeFast(0, firstTo) : [];
+
+    if (generation !== inventoryLoadGeneration) return false;
+
+    allInventoryRows = firstRows;
+    window.allInventoryRows = allInventoryRows;
+
+    console.log(`Inventory first batch loaded fast: ${allInventoryRows.length} of ${inventoryTotalSupabaseCount}`);
+
+    if (inventoryTotalSupabaseCount > allInventoryRows.length) {
+      setInventoryLoadingStatus(`Inventory opened with first ${allInventoryRows.length} rows. Loading rest in background...`);
+      loadRemainingInventoryRowsFast(generation, inventoryTotalSupabaseCount, allInventoryRows.length);
+    } else {
+      finishInventoryLoadingStatus(`Inventory loaded: ${allInventoryRows.length} rows.`, "success");
     }
 
     return true;
   } catch (error) {
-    console.error("Inventory load error:", error);
-    setInventoryStatus("Could not load inventory rows.", "error");
-    return false;
+    console.error("Fast inventory load error:", error);
+
+    try {
+      setInventoryLoadingStatus("Fast load failed. Trying safe loader...");
+      allInventoryRows = await fetchAllSupabaseRows("inventory", { orderBy: "id", ascending: true, pageSize: 1000 });
+      window.allInventoryRows = allInventoryRows;
+      finishInventoryLoadingStatus(`Inventory loaded with safe loader: ${allInventoryRows.length} rows.`, "success");
+      return true;
+    } catch (fallbackError) {
+      console.error("Inventory load error:", fallbackError);
+      setInventoryStatus("Could not load inventory rows.", "error");
+      return false;
+    }
   }
 }
 
@@ -1406,7 +1527,7 @@ async function loadInventoryRows() {
 
   // Load helper settings for calculations, but do NOT auto-sync all 6k+ rows on page load.
   // Full row-by-row sync was causing browser/Supabase network aborts after the real import.
-  await loadHelperLocationSettings();
+  loadHelperLocationSettings();
 
   currentInventoryPage = 1;
   renderInventoryTable();
