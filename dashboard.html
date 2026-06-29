@@ -360,11 +360,11 @@
       border-bottom: 1px solid #e5e7eb !important;
       color: #0f172a !important;
       font-size: 13px !important;
-      font-weight: 300 !important;
+      font-weight: 700 !important;
       background: #ffffff;
       vertical-align: middle;
       white-space: nowrap;
-      text-align: left !important;
+      text-align: center !important;
     }
 
     .dashboard-table-card .table th:first-child,
@@ -565,6 +565,32 @@ function percentFormat(value) {
   return `${Number(value || 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
 }
 
+async function fetchAllSupabaseRows(table, { orderBy = "created_at", ascending = false, pageSize = 1000 } = {}) {
+  let allRows = [];
+  let from = 0;
+
+  while (true) {
+    let query = supabaseClient.from(table).select("*");
+
+    if (orderBy) {
+      query = query.order(orderBy, { ascending });
+    }
+
+    const to = from + pageSize - 1;
+    const { data, error } = await query.range(from, to);
+
+    if (error) throw error;
+
+    const rows = data || [];
+    allRows = allRows.concat(rows);
+
+    if (rows.length < pageSize) break;
+    from += pageSize;
+  }
+
+  return allRows;
+}
+
 function groupRows(rows, field, sumField = null) {
   const map = {};
 
@@ -641,16 +667,15 @@ async function setCount(table, elementId) {
 }
 
 async function loadDashboardStats() {
-  const { data: inventory, error } = await supabaseClient
-    .from("inventory")
-    .select("*");
+  let rows = [];
 
-  if (error) {
+  try {
+    rows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
+    console.log(`Dashboard inventory rows loaded: ${rows.length}`);
+  } catch (error) {
     console.error(error);
     return;
   }
-
-  const rows = inventory || [];
 
   const totalMBF = rows.reduce((sum, row) => sum + Number(row.mbf || 0), 0);
   const soldRows = rows.filter(row => row.so_number && String(row.so_number).trim() !== "").length;
