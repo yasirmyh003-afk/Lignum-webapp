@@ -749,11 +749,38 @@
 	const INVENTORY_PAGE_SIZE = 250;
 	const INVENTORY_COLUMN_VIEW_STORAGE_KEY = "inventory_column_view_v1";
 
-async function fetchAllSupabaseRows(table, { orderBy = "created_at", ascending = false, pageSize = 1000, filterBuilder = null } = {}) {
-  let allRows = [];
-  let from = 0;
+function sleepInventoryFetch(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-  while (true) {
+async function fetchAllSupabaseRows(table, { orderBy = "id", ascending = true, pageSize = 500, filterBuilder = null } = {}) {
+  let allRows = [];
+  let expectedCount = null;
+
+  try {
+    let countQuery = supabaseClient
+      .from(table)
+      .select("id", { count: "exact", head: true });
+
+    if (typeof filterBuilder === "function") {
+      countQuery = filterBuilder(countQuery);
+    }
+
+    const { count, error: countError } = await countQuery;
+
+    if (countError) {
+      console.warn(`${table} count check failed, continuing with paged load:`, countError);
+    } else {
+      expectedCount = Number(count || 0);
+      console.log(`${table} exact count from Supabase: ${expectedCount}`);
+    }
+  } catch (countCatchError) {
+    console.warn(`${table} count check failed, continuing with paged load:`, countCatchError);
+  }
+
+  for (let from = 0; ; from += pageSize) {
+    const to = from + pageSize - 1;
+
     let query = supabaseClient
       .from(table)
       .select("*");
@@ -766,7 +793,6 @@ async function fetchAllSupabaseRows(table, { orderBy = "created_at", ascending =
       query = query.order(orderBy, { ascending });
     }
 
-    const to = from + pageSize - 1;
     const { data, error } = await query.range(from, to);
 
     if (error) throw error;
@@ -774,8 +800,18 @@ async function fetchAllSupabaseRows(table, { orderBy = "created_at", ascending =
     const rows = data || [];
     allRows = allRows.concat(rows);
 
+    console.log(`${table} batch loaded: ${from + 1}-${from + rows.length}${expectedCount !== null ? ` of ${expectedCount}` : ""}`);
+
+    if (!rows.length) break;
+    if (expectedCount !== null && allRows.length >= expectedCount) break;
     if (rows.length < pageSize) break;
-    from += pageSize;
+
+    // Small pause prevents browser/Supabase request aborts on large tables.
+    await sleepInventoryFetch(40);
+  }
+
+  if (expectedCount !== null && allRows.length !== expectedCount) {
+    console.warn(`${table} loaded ${allRows.length} rows, but Supabase count says ${expectedCount}.`);
   }
 
   return allRows;
@@ -1275,7 +1311,7 @@ async function calculateAndSyncInventoryCostFields(options = {}) {
   try {
     await loadHelperLocationSettings();
 
-    const rows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
+    const rows = await fetchAllSupabaseRows("inventory", { orderBy: "id", ascending: true, pageSize: 500 });
     const poCounts = {};
 
     rows.forEach(row => {
@@ -1348,8 +1384,14 @@ async function calculateAndSyncInventoryCostFields(options = {}) {
 
 async function reloadInventoryRowsNoSync() {
   try {
-    allInventoryRows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
-    console.log(`Inventory rows loaded: ${allInventoryRows.length}`);
+    allInventoryRows = await fetchAllSupabaseRows("inventory", { orderBy: "id", ascending: true, pageSize: 500 });
+    window.allInventoryRows = allInventoryRows;
+    console.log(`Inventory rows loaded in web app memory: ${allInventoryRows.length}`);
+
+    if (allInventoryRows.length === 1000) {
+      console.warn("Only 1000 inventory rows loaded. This usually means an older inventory.html is still cached or the old file is still being served. Hard refresh or restart the local server after replacing the file.");
+    }
+
     return true;
   } catch (error) {
     console.error("Inventory load error:", error);
@@ -1656,7 +1698,7 @@ function escapeHtml(text) {
     const selectedRows = await getSelectedInventoryRows();
     if (!selectedRows.length) return;
 
-    const allRows = await fetchAllSupabaseRows("inventory", { orderBy: "created_at", ascending: false });
+    const allRows = await fetchAllSupabaseRows("inventory", { orderBy: "id", ascending: true, pageSize: 500 });
 
     let maxNumber = 0;
     const poToNumber = {};
@@ -1797,8 +1839,9 @@ function escapeHtml(text) {
         }
 
         const data = await fetchAllSupabaseRows("inventory", {
-          orderBy: "created_at",
-          ascending: false,
+          orderBy: "id",
+          ascending: true,
+          pageSize: 500,
           filterBuilder: query => query.eq("so_number", so)
         });
         if (!data || data.length === 0) {
