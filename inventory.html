@@ -312,6 +312,50 @@
 }
 
 
+
+
+.inventory-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.inventory-pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inventory-pagination-actions button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #156082;
+  border-radius: 9px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.inventory-pagination-actions button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.inventory-pagination-hint {
+  color: #64748b;
+  font-weight: 700;
+}
+
 /* ===== Column Views + Detached Summary Strip ===== */
 .inventory-summary-strip {
   display: grid;
@@ -508,7 +552,7 @@
 				class="inventory-search-input"
 				type="text"
 				placeholder="Search inventory..."
-				oninput="renderInventoryTable()"
+				oninput="currentInventoryPage = 1; renderInventoryTable()"
 				/>
 				<button class="btn btn-secondary" onclick="openDrawer('filterDrawer','filterOverlay')">Filter</button>
 				<button class="btn btn-secondary" onclick="clearAllInventoryFilters()">Clear Filters</button>
@@ -520,6 +564,7 @@
 
 			<div id="inventory-status" class="inline-status"></div>
 			<div id="active-filter-bar" class="active-filter-bar"></div>
+            <div id="inventory-pagination-top" class="inventory-pagination-bar"></div>
           </div>
 
           <div class="table-wrap">
@@ -532,6 +577,7 @@
 
               <tbody id="inventory-table-body"></tbody>
             </table>
+            <div id="inventory-pagination-bottom" class="inventory-pagination-bar"></div>
           </div>
         </section>
       </div>
@@ -699,6 +745,8 @@
 	let columnOrder = [];
 	let hiddenColumnFields = new Set();
 	let draggedColumnField = null;
+	let currentInventoryPage = 1;
+	const INVENTORY_PAGE_SIZE = 250;
 	const INVENTORY_COLUMN_VIEW_STORAGE_KEY = "inventory_column_view_v1";
 
 async function fetchAllSupabaseRows(table, { orderBy = "created_at", ascending = false, pageSize = 1000, filterBuilder = null } = {}) {
@@ -1314,13 +1362,11 @@ async function loadInventoryRows() {
   const loaded = await reloadInventoryRowsNoSync();
   if (!loaded) return;
 
-  // Backfill/update calculated cost fields on page load too. This fixes rows where
-  // INVOICED / RECEIVED / LOCATION / PO# were added later and calculated fields are blank.
-  const updatedCount = await calculateAndSyncInventoryCostFields();
-  if (updatedCount > 0) {
-    await reloadInventoryRowsNoSync();
-  }
+  // Load helper settings for calculations, but do NOT auto-sync all 6k+ rows on page load.
+  // Full row-by-row sync was causing browser/Supabase network aborts after the real import.
+  await loadHelperLocationSettings();
 
+  currentInventoryPage = 1;
   renderInventoryTable();
   renderActiveFilterBar();
   loadSavedFilters();
@@ -1498,8 +1544,27 @@ function renderInventoryRows() {
   tbody.innerHTML = "";
 
   const rows = getFilteredRows();
+  const visibleColumns = getVisibleColumns();
+  const totalRows = rows.length;
+  const totalPages = Math.max(1, Math.ceil(totalRows / INVENTORY_PAGE_SIZE));
 
-  rows.forEach(row => {
+  if (currentInventoryPage > totalPages) currentInventoryPage = totalPages;
+  if (currentInventoryPage < 1) currentInventoryPage = 1;
+
+  const startIndex = totalRows ? (currentInventoryPage - 1) * INVENTORY_PAGE_SIZE : 0;
+  const endIndex = totalRows ? Math.min(startIndex + INVENTORY_PAGE_SIZE, totalRows) : 0;
+  const pageRows = rows.slice(startIndex, endIndex);
+
+  renderInventoryPagination(totalRows, startIndex, endIndex, totalPages);
+
+  if (!pageRows.length) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="${visibleColumns.length + 1}" class="empty-note">No inventory rows match the current filters.</td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+
+  pageRows.forEach(row => {
     const tr = document.createElement("tr");
 
     const checkboxTd = document.createElement("td");
@@ -1516,12 +1581,38 @@ function renderInventoryRows() {
     checkboxTd.appendChild(checkbox);
     tr.appendChild(checkboxTd);
 
-    getVisibleColumns().forEach(column => {
+    visibleColumns.forEach(column => {
       tr.appendChild(createEditableCell(row, column));
     });
 
     tbody.appendChild(tr);
   });
+}
+
+function renderInventoryPagination(totalRows, startIndex, endIndex, totalPages) {
+  const html = `
+    <div>
+      Showing <strong>${totalRows ? startIndex + 1 : 0}-${endIndex}</strong> of <strong>${totalRows}</strong> rows
+      <span class="inventory-pagination-hint">Page ${currentInventoryPage} of ${totalPages}</span>
+    </div>
+    <div class="inventory-pagination-actions">
+      <button type="button" onclick="setInventoryPage(1)" ${currentInventoryPage <= 1 ? "disabled" : ""}>First</button>
+      <button type="button" onclick="setInventoryPage(currentInventoryPage - 1)" ${currentInventoryPage <= 1 ? "disabled" : ""}>Prev</button>
+      <button type="button" onclick="setInventoryPage(currentInventoryPage + 1)" ${currentInventoryPage >= totalPages ? "disabled" : ""}>Next</button>
+      <button type="button" onclick="setInventoryPage(${totalPages})" ${currentInventoryPage >= totalPages ? "disabled" : ""}>Last</button>
+    </div>
+  `;
+
+  ["inventory-pagination-top", "inventory-pagination-bottom"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+}
+
+function setInventoryPage(page) {
+  currentInventoryPage = Number(page) || 1;
+  renderInventoryTable();
+  renderActiveFilterBar();
 }
 
 
@@ -1789,18 +1880,27 @@ function escapeHtml(text) {
 	
 	
 	async function loadSavedFilters() {
-  const { data, error } = await supabaseClient
-    .from("inventory_saved_filters")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Saved filters load error:", error);
-    return;
-  }
-
   const list = document.getElementById("saved-filter-list");
   if (!list) return;
+
+  list.innerHTML = `<div class="empty-note">Loading saved filters...</div>`;
+
+  let data = [];
+
+  try {
+    const response = await supabaseClient
+      .from("inventory_saved_filters")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (response.error) throw response.error;
+    data = response.data || [];
+  } catch (error) {
+    console.warn("Saved filters skipped:", error?.message || error);
+    list.innerHTML = `<div class="empty-note">Saved filters could not load right now. Inventory data is still available.</div>`;
+    return;
+  }
 
   list.innerHTML = "";
 
@@ -2055,6 +2155,7 @@ function applyColumnFilter(field) {
     currentFilterMenu = null;
   }
 
+  currentInventoryPage = 1;
   renderInventoryTable();
   renderActiveFilterBar();
 }
@@ -2080,6 +2181,7 @@ function renderActiveFilterBar() {
 }
 
 function clearAllInventoryFilters() {
+  currentInventoryPage = 1;
   activeFilters = {};
   const search = document.getElementById("inventory-global-search");
   if (search) search.value = "";
@@ -2090,6 +2192,7 @@ function clearAllInventoryFilters() {
 }
 
 function removeFilter(field) {
+  currentInventoryPage = 1;
   delete activeFilters[field];
   renderInventoryTable();
   renderActiveFilterBar();
