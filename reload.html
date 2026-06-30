@@ -201,6 +201,23 @@
     font-weight: 800 !important;
   }
 
+  .reload-load-status {
+    display: none;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .reload-load-status.show {
+    display: block;
+  }
+
+
   @media(max-width: 900px) {
     .reload-header-row {
       align-items: flex-start;
@@ -275,7 +292,7 @@
     <div class="inventory-filter-grid reload-filter-grid">
       <div class="form-group">
         <label>Location</label>
-        <select id="location_filter" onchange="renderReloadTables()">
+        <select id="location_filter" onchange="fillSizeFilter(); renderReloadTables()">
           <option value="">Select Location</option>
         </select>
       </div>
@@ -299,6 +316,7 @@
 </section>
 
         <section class="reload-board">
+          <div id="reload-load-status" class="reload-load-status"></div>
           <div id="reload-tables"></div>
         </section>
 </div>		
@@ -319,13 +337,40 @@
     const reloadLengths = [92, 104, 116, 8, 10, 12, 14, 16, 18, 20];
 
     document.addEventListener("DOMContentLoaded", async function () {
+      await requireLogin();
       loadSidebar("reload");
       setTodayLabel();
       await loadReloadData();
     });
 
     function isBlank(value) {
-      return value === null || value === undefined || String(value).trim() === "";
+      if (value === null || value === undefined) return true;
+      const text = String(value).trim();
+      return text === "" || text.toLowerCase() === "false";
+    }
+
+    function normText(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function normalizeLength(value) {
+      const text = String(value ?? "").replace(/[^0-9.-]/g, "").trim();
+      const num = Number(text);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function setReloadLoadStatus(message) {
+      const el = document.getElementById("reload-load-status");
+      if (!el) return;
+
+      if (!message) {
+        el.classList.remove("show");
+        el.textContent = "";
+        return;
+      }
+
+      el.textContent = message;
+      el.classList.add("show");
     }
 
     function normalizeDateOnly(value) {
@@ -346,25 +391,87 @@
       document.getElementById("today-label").textContent = label;
     }
 
-    async function loadReloadData() {
-      const { data, error } = await supabaseClient
+    const RELOAD_BATCH_SIZE = 1000;
+    const RELOAD_SELECT_COLUMNS = "id,location,size,so_number,invoiced,car_number,ship_week,length_value,received,sold,po_number,mill";
+
+    async function getInventoryCountForReload() {
+      const { count, error } = await supabaseClient
         .from("inventory")
-        .select("*")
-        .order("so_number", { ascending: true });
+        .select("id", { count: "exact", head: true });
 
       if (error) {
+        console.warn("Reload count warning:", error);
+        return null;
+      }
+
+      return count;
+    }
+
+    async function fetchAllReloadInventoryRows() {
+      const totalCount = await getInventoryCountForReload();
+      const allRows = [];
+      let from = 0;
+
+      while (true) {
+        const to = from + RELOAD_BATCH_SIZE - 1;
+
+        setReloadLoadStatus(
+          totalCount
+            ? `Loading Inventory rows ${from + 1}-${Math.min(to + 1, totalCount)} of ${totalCount}...`
+            : `Loading Inventory rows ${from + 1}-${to + 1}...`
+        );
+
+        const { data, error } = await supabaseClient
+          .from("inventory")
+          .select(RELOAD_SELECT_COLUMNS)
+          .order("so_number", { ascending: true, nullsFirst: false })
+          .range(from, to);
+
+        if (error) throw error;
+
+        const chunk = data || [];
+        allRows.push(...chunk);
+
+        console.log(`Reload inventory chunk loaded: ${from + 1}-${from + chunk.length}`, {
+          chunk: chunk.length,
+          loaded: allRows.length,
+          total: totalCount
+        });
+
+        if (chunk.length < RELOAD_BATCH_SIZE) break;
+        if (totalCount && allRows.length >= totalCount) break;
+
+        from += RELOAD_BATCH_SIZE;
+
+        // Small pause keeps the browser responsive while loading 6k+ rows.
+        await new Promise(resolve => setTimeout(resolve, 20));
+      }
+
+      return allRows;
+    }
+
+    async function loadReloadData() {
+      try {
+        setReloadLoadStatus("Loading Reload data from Inventory...");
+
+        reloadRows = await fetchAllReloadInventoryRows();
+
+        console.log("Reload inventory rows loaded:", reloadRows.length);
+
+        fillFilters();
+        renderReloadTables();
+
+        setReloadLoadStatus(`Reload data loaded: ${reloadRows.length.toLocaleString()} Inventory rows.`);
+        setTimeout(() => setReloadLoadStatus(""), 1800);
+      } catch (error) {
         console.error("Reload load error:", error);
+        setReloadLoadStatus("");
         showAppModal({
           type: "error",
           title: "Load Failed",
-          message: "Could not load Reload data from Inventory."
+          message: error.message || "Could not load Reload data from Inventory."
         });
-        return;
       }
-
-      reloadRows = data || [];
-      fillFilters();
-      renderReloadTables();
     }
 
     function fillFilters() {
@@ -380,7 +487,7 @@
         reloadRows
           .map(row => row.location)
           .filter(value => !isBlank(value))
-          .map(value => String(value))
+          .map(value => String(value).trim())
       )].sort();
 
       select.innerHTML = `<option value="">Select Location</option>`;
@@ -403,11 +510,14 @@
       const select = document.getElementById("size_filter");
       const currentValue = select.value;
 
+      const selectedLocation = getSelectedLocation();
+
       const sizes = [...new Set(
         reloadRows
+          .filter(row => !selectedLocation || normText(row.location) === normText(selectedLocation))
           .map(row => row.size)
           .filter(value => !isBlank(value))
-          .map(value => String(value))
+          .map(value => String(value).trim())
       )].sort();
 
       select.innerHTML = `<option value="">Select Size</option>`;
@@ -438,7 +548,16 @@
       return [...new Set(
         values
           .filter(value => !isBlank(value))
-          .map(value => String(value))
+          .map(value => String(value).trim())
+      )].join(", ");
+    }
+
+    function uniqueDateText(values) {
+      return [...new Set(
+        values
+          .filter(value => !isBlank(value))
+          .map(value => formatDate(value))
+          .filter(value => !isBlank(value))
       )].join(", ");
     }
 
@@ -479,8 +598,8 @@
 
       return reloadRows.filter(row => {
         return (
-          String(row.location || "") === String(location || "") &&
-          String(row.size || "").toLowerCase() === String(size).toLowerCase() &&
+          normText(row.location) === normText(location) &&
+          normText(row.size) === normText(size) &&
           !isBlank(row.so_number) &&
           isBlank(row.invoiced)
         );
@@ -511,7 +630,7 @@
         soMap[so].carNumbers.push(row.car_number);
         soMap[so].shipWeeks.push(row.ship_week);
 
-        const len = Number(row.length_value);
+        const len = normalizeLength(row.length_value);
         if (reloadLengths.includes(len)) {
           soMap[so].counts[len] += 1;
         }
@@ -522,12 +641,12 @@
 
         return {
           carNumbers: uniqueText(item.carNumbers),
-          shipWeeks: uniqueText(item.shipWeeks),
+          shipWeeks: uniqueDateText(item.shipWeeks),
           so: item.so,
           counts: item.counts,
           total
         };
-      });
+      }).sort((a, b) => String(a.so).localeCompare(String(b.so), undefined, { numeric: true }));
     }
 
     function createStagedSection(size) {
@@ -620,8 +739,8 @@
         const receivedDate = normalizeDateOnly(row.received);
 
         return (
-          String(row.location || "") === String(location || "") &&
-          String(row.size || "").toLowerCase() === String(size).toLowerCase() &&
+          normText(row.location) === normText(location) &&
+          normText(row.size) === normText(size) &&
           !isBlank(row.received) &&
           receivedDate &&
           receivedDate < today &&
@@ -654,7 +773,7 @@
 
         poMap[po].carNumbers.push(row.car_number);
 
-        const len = Number(row.length_value);
+        const len = normalizeLength(row.length_value);
 
         if (
           reloadLengths.includes(len) &&
@@ -676,7 +795,7 @@
           counts: item.counts,
           total
         };
-      });
+      }).sort((a, b) => String(a.po).localeCompare(String(b.po), undefined, { numeric: true }));
     }
 
     function createRemainingOtgSection(size) {
